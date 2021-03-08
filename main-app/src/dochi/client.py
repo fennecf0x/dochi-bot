@@ -16,6 +16,8 @@ from .command import *
 
 class DochiBot(discord.Client):
     def __init__(self):
+        super().__init__()
+
         # initialize acceptable commands
         random_selection_commands = CommandGroup(
             Command(
