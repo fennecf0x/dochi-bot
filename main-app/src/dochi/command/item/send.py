@@ -14,7 +14,7 @@ class Send(CommandItem):
         message: discord.Message,
         *,
         content: str,
-        url: Optional[str],
+        url: Optional[str] = None,
         reply: bool = False,
         mention_author: bool = False,
         **kwargs,
