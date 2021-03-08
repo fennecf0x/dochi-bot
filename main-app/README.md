@@ -16,6 +16,14 @@ The main program of Dochi bot.
     + `DuckduckgoImages`
     + `ConstructMemberList`
     + `Say` (and other voice related commands)
+    + `random_selection`
+    + `set_timer`
+    + `set_alarm`
+    + `set_alarm_off`
+    + `block`
+    + `play_emergency`
+    + `invite`
+    + `from_emoji`
 * Find a way to mix two or more sound sources
 * Implement missing features
     + Updating likability values
