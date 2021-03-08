@@ -13,7 +13,7 @@ if not is_in_container:
     if "PRODUCTION" in os.environ:
         dotenv_path = join(dirname(__file__), "..", ".env")
     else:
-        dotenv_path = join(dirname(__file__), "..", ".env.local")
+        dotenv_path = join(dirname(__file__), "..", ".env.debug")
 
     load_dotenv(dotenv_path)
 
