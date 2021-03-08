@@ -22,11 +22,11 @@ class Send(CommandItem):
         # text only
         if url is None:
             if reply:
-                await message.reply(content, mention_author=mention_author)
+                prev_message = await message.reply(content, mention_author=mention_author)
             else:
-                await message.channel.send(content)
+                prev_message = await message.channel.send(content)
 
-            return kwargs
+            return {**kwargs, "message": prev_message}
 
         is_on_web = url.startswith("http://") or url.startswith("https://")
 
@@ -34,26 +34,27 @@ class Send(CommandItem):
 
         if is_on_web and content == "":
             if reply:
-                await message.reply(content=url, mention_author=mention_author)
+                prev_message = await message.reply(content=url, mention_author=mention_author)
             else:
-                await message.channel.send(content=url)
+                prev_message = await message.channel.send(content=url)
 
-            return kwargs
+            return {**kwargs, "message": prev_message}
 
         if not is_on_web:
             try:
                 if reply:
-                    await message.reply(
+                    prev_message = await message.reply(
                         content=content, file=discord.File(url), mention_author=mention_author
                     )
                 else:
-                    await message.channel.send(content=content, file=discord.File(url))
+                    prev_message = await message.channel.send(content=content, file=discord.File(url))
             except Exception as e:
                 # TODO: send file failed
+                prev_message = None
                 print("send file failed", e)
                 pass
 
-            return kwargs
+            return {**kwargs, "message": prev_message}
 
         # from now on, `url` is on the web and `content` is nonempty
         # fetch the file from `url`
@@ -74,12 +75,13 @@ class Send(CommandItem):
 
         try:
             if reply:
-                await message.reply(content=content, file=file, mention_author=mention_author)
+                prev_message = await message.reply(content=content, file=file, mention_author=mention_author)
             else:
-                await message.channel.send(content=content, file=file)
+                prev_message = await message.channel.send(content=content, file=file)
         except Exception as e:
             # TODO: send file failed
+            prev_message = None
             print("send file failed", e)
             pass
 
-        return kwargs
+        return {**kwargs, "message": prev_message}
