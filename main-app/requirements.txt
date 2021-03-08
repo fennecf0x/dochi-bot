@@ -1,0 +1,21 @@
+# base
+wheel
+aiohttp==3.7.4
+
+# discord
+discord.py[voice]~=1.6.0
+discord.py-stubs~=1.6.0.2
+ffmpeg==1.4
+PyNaCl==1.4.0
+
+# database
+peewee==3.14.1
+
+# korean support
+tossi==0.3.1
+
+# numpy-like
+numpy==1.20.1
+
+# scheduling
+APScheduler==3.7.0
