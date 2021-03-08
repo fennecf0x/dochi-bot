@@ -46,7 +46,7 @@ def currency(
 
         return currency
 
-    except model.Currency.DoesNotExist:
+    except model.Currency.DoesNotExist:  # pylint: disable=maybe-no-member
         currency = model.Currency.create(
             user_id=user_id, currency_type=currency_type.name, amount=amount
         )
