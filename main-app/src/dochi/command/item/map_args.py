@@ -4,7 +4,9 @@ from .item import CommandItem
 
 
 class MapArgs(CommandItem):
-    def __init__(self, mapping: Union[Callable, dict]):
+    def __init__(self, mapping: Union[Callable, dict], **_kwargs):
+        self.kwargs = _kwargs
+
         if type(mapping) == dict:
             self.mapping = lambda client, message, kwargs: {
                 # old keys
@@ -27,4 +29,4 @@ class MapArgs(CommandItem):
     async def __call__(
         self, client: discord.Client, message: discord.Message, **kwargs
     ):
-        return self.mapping(client, message, kwargs)
+        return {**self.mapping(client, message, kwargs), **self.kwargs}

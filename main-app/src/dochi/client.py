@@ -34,11 +34,9 @@ class DochiBot(discord.Client):
             ExactString("보리"),
             Args(path=os.environ["BORI_PATH"], absolute=True),
             ListFiles(),
-            MapArgs({"files": "choices"}),
-            Args(is_random=True),
+            MapArgs({"files": "choices"}, is_random=True),
             SampleFrom(),
-            MapArgs({"sample": "url"}),
-            Args(content=""),
+            MapArgs({"sample": "url"}, content=""),
             Send(),
         )
 
