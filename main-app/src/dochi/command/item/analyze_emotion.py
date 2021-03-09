@@ -31,6 +31,10 @@ class AnalyzeEmotion(CommandItem):
         if "SALTLUX_KEY" not in os.environ:
             return kwargs
 
+        content = content.strip()
+        if content == "":
+            return kwargs
+
         headers = {"content-type": "application/json"}
 
         payload = {
