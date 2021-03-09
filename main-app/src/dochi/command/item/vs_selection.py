@@ -16,7 +16,7 @@ class VsSelection(CommandItem):
         **kwargs,
     ):
         if not re.search(r"vs", content):
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         content = content.strip()
         vs_front = False
@@ -38,7 +38,7 @@ class VsSelection(CommandItem):
         choices = [item.strip() for item in choices]
 
         if len(choices) <= 1:
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         d = {util.string.strip_whitespaces(x): x for x in choices}
         choices = list(d.values())
@@ -48,6 +48,6 @@ class VsSelection(CommandItem):
             content = "ㅋㅋ"
             await Send()(client, message, content=content)
 
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         return {**kwargs, "is_satisfied": True, "choices": choices}

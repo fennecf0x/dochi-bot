@@ -17,6 +17,6 @@ class StartsWith(CommandItem):
         **kwargs,
     ):
         if content[:len(self.needle)] != self.needle:
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         return {**kwargs, "is_satisfied": True}

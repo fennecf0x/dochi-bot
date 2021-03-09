@@ -6,9 +6,6 @@ The main program of Dochi bot.
 ## TODO
 
 * Restore commands that had existed before
-    + `MatchRegex`
-    + `OneOf`
-    + `Negation`
     + `AddReaction`
     + `ChangePresence`
     + `DeleteMessage`

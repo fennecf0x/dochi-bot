@@ -10,10 +10,7 @@ is_in_container = os.environ.get("AM_I_IN_A_DOCKER_CONTAINER", False)
 if not is_in_container:
     from dotenv import load_dotenv
 
-    if "PRODUCTION" in os.environ:
-        dotenv_path = join(dirname(__file__), "..", ".env")
-    else:
-        dotenv_path = join(dirname(__file__), "..", ".env.debug")
+    dotenv_path = join(dirname(__file__), "..", ".env.debug")
 
     load_dotenv(dotenv_path)
 

@@ -17,6 +17,6 @@ class ExactString(CommandItem):
         **kwargs,
     ):
         if content != self.needle:
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         return {**kwargs, "is_satisfied": True}

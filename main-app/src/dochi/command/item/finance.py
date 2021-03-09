@@ -56,7 +56,7 @@ class IsTransacting(CommandItem):
         data = extract_transaction_data(content)
 
         if data is None:
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         return {**kwargs, "is_satisfied": True, **data}
 
@@ -97,7 +97,7 @@ class IsCancellingTransaction(CommandItem):
         data = extract_cancellation_data(content)
 
         if data is None:
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         return {**kwargs, "is_satisfied": True, **data}
 

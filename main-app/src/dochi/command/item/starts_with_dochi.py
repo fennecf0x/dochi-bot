@@ -19,6 +19,6 @@ class StartsWithDochi(CommandItem):
         match = re.match(dochi_pattern, content)
 
         if match is None:
-            return {"is_satisfied": False}
+            return {**kwargs, "is_satisfied": False}
 
         return {**kwargs, "is_satisfied": True, "content": match.group(3)}

@@ -17,4 +17,4 @@ class Filter(CommandItem):
         if self.predicate(client, message, kwargs):
             return {**kwargs, "is_satisfied": True}
 
-        return {"is_satisfied": False}
+        return {**kwargs, "is_satisfied": False}
