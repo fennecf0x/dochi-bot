@@ -15,6 +15,7 @@ class SampleFrom(CommandItem, Generic[T]):
         client: discord.Client,
         message: discord.Message,
         *,
+        is_random: bool = False,
         choices: List[T],
         n: int = 1,
         **kwargs,
@@ -26,6 +27,15 @@ class SampleFrom(CommandItem, Generic[T]):
         """
 
         sample_size = min(n, len(choices))
+
+        if is_random:
+            random.seed(time.time())
+            sample = random.sample(choices, k=sample_size)
+
+            if sample_size == 1:
+                return {**kwargs, "sample": sample[0]}
+
+            return {**kwargs, "sample": sample}
 
         prioritised_choices = []
 
