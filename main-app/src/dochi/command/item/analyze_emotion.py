@@ -62,10 +62,10 @@ class AnalyzeEmotion(CommandItem):
                             state.mood
                             + 2
                             * math.sqrt((random.random() + 1) / 2)
-                            * min(1, 1.5 * reliability ** 1.3 + 0.3)
+                            * min(1, 1.5 * reliability ** 1.3 + 0.5)
                             + state.mood / 3
                         )
-                        / 3
+                        / 5
                         * (5 if starts_with_dochi else 1)
                     )
                     base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25)
