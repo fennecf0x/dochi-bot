@@ -49,17 +49,20 @@ class AnalyzeEmotion(CommandItem):
                         json_resp["Result"][0][0],
                     )
 
+                    print(emotion, reliability)
+
                     random.seed(time.time())
                     base_score = lambda: (
                         (
                             state.mood
                             + 2
                             * math.sqrt((random.random() + 1) / 2)
-                            * min(1, reliability + 0.2)
+                            * min(1, reliability ** 3 + 0.2)
                             + state.mood / 10
+                            + (random.random() + 1) / 4
                         )
-                        / 2
-                        * (3 if starts_with_dochi else 1)
+                        / 4
+                        * (5 if starts_with_dochi else 1)
                     )
                     base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25)
 
