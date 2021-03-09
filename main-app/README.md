@@ -50,5 +50,5 @@ docker run -d \
     --env-file "$(pwd)"/main-app/.env \
     dochi-bot-main-app
 
-docker rm dochi-bot-main-app-old
+docker rm -f dochi-bot-main-app-old
 ```

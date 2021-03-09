@@ -29,7 +29,7 @@ class DochiBot(discord.Client):
         )
 
         likability_update_commands = CommandGroup()
-        
+
         bori_command = Command(
             ExactString("보리"),
             Args(path=os.environ["BORI_PATH"], absolute=True),
@@ -38,6 +38,7 @@ class DochiBot(discord.Client):
             Args(is_random=True),
             SampleFrom(),
             MapArgs({"sample": "url"}),
+            Args(content=""),
             Send(),
         )
 
@@ -47,7 +48,6 @@ class DochiBot(discord.Client):
             bori_command,
         )
 
-
     async def on_ready(self):
         # add jobs to the scheduler
         schedule.add_job(schedule.change_mood, args=[self], hours=1)
@@ -55,12 +55,10 @@ class DochiBot(discord.Client):
         await self.change_presence(status=discord.Status.offline)
         print("Logged on as", self.user)
 
-
     async def on_message(self, message: discord.Message):
         # do not respond to messages of the bot itself
         if message.author == self.user:
             return
-
 
         # allow only selected guilds
         if message.guild is None or (
@@ -70,7 +68,6 @@ class DochiBot(discord.Client):
             ]
         ):
             return
-
 
         # accept messages
         await self.group(self, message)
