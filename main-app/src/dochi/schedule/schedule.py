@@ -13,19 +13,20 @@ import discord
 import random
 import time
 import math
+from dochi.database import get, model, update
 
 from ..state import state
 
 scheduler = AsyncIOScheduler()
 
 
-def add_job(func, *, weeks=0, days=0, hours=0, minutes=0, seconds=0, **kwargs):
+def add_job(func, *, weeks=0, days=0, hours=0, minutes=0, seconds=0, now=True, **kwargs):
     job = scheduler.add_job(
         func,
         **kwargs,
         trigger=OrTrigger(
             [
-                DateTrigger(run_date=datetime.now()),
+                *([DateTrigger(run_date=datetime.now())] if now else []),
                 IntervalTrigger(
                     weeks=weeks,
                     days=days,
@@ -49,3 +50,23 @@ def change_mood(client: discord.Client):
     state.mood = mood
 
     print("mood changed")
+
+
+def decrease_likability(client: discord.Client):
+    for user in list(model.User.select()):
+        likability = get.likability_from_user(user)
+        after_decrement = lambda v, r: max(
+            0, v - r * 1.1 * (0.25 + v / 200 if v < 70 else 0.2 + 2.5 / (v - 60))
+        )
+
+        update.likability(
+            user.user_id,
+            kindliness=after_decrement(likability.kindliness, 0.7),
+            unkindliness=after_decrement(likability.unkindliness, 1),
+            friendliness=after_decrement(likability.friendliness, 0.7),
+            unfriendliness=after_decrement(likability.unfriendliness, 1),
+            respectfulness=after_decrement(likability.respectfulness, 0.7),
+            disrespectfulness=after_decrement(likability.disrespectfulness, 1),
+        )
+
+    print("likability decreased")

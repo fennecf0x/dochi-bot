@@ -66,6 +66,7 @@ class DochiBot(discord.Client):
     async def on_ready(self):
         # add jobs to the scheduler
         schedule.add_job(schedule.change_mood, args=[self], hours=1)
+        schedule.add_job(schedule.decrease_likability, args=[self], minutes=30, now=False)
 
         await self.change_presence(status=discord.Status.offline)
         print("Logged on as", self.user)

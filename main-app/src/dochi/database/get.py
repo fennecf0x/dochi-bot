@@ -35,3 +35,14 @@ def likability(user_id: str) -> Likability:
         respectfulness = u.respectfulness,
         disrespectfulness = u.disrespectfulness,
     )
+
+
+def likability_from_user(u: model.User) -> Likability:
+    return Likability(
+        kindliness = u.kindliness,
+        unkindliness = u.unkindliness,
+        friendliness = u.friendliness,
+        unfriendliness = u.unfriendliness,
+        respectfulness = u.respectfulness,
+        disrespectfulness = u.disrespectfulness,
+    )
