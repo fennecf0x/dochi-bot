@@ -84,7 +84,7 @@ class AnalyzeEmotion(CommandItem):
                     if emotion == "기대":
                         multipliers = (2, 0, 1, 0, 0, 0)
 
-                    noise = (np.random.dirichlet([2] * 6) + 0.07) / 2
+                    noise = (np.random.dirichlet([2] * 6) + [0.07, -0.07] * 3) / 2
 
                     user_id = str(message.author.id)
 
