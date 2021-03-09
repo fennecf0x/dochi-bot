@@ -83,7 +83,7 @@ class AnalyzeEmotion(CommandItem):
                     if emotion == "슬픔":
                         multipliers = (1, 0, 0, 1, 0, 0)
                     if emotion == "혐오":
-                        multipliers = (0, 2, 0, 4, 0, 4)
+                        multipliers = (0, 0, 0, 1, 0, 1)
                     if emotion == "분노":
                         multipliers = (0, 1, 0, 0, 0, 1)
                     if emotion == "기대":
