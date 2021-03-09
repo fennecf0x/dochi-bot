@@ -45,11 +45,11 @@ class Likability:
         self.disrespectfulness: float = disrespectfulness
 
     def __str__(self):
-        return "<Likability object" \
-            f"    kindliness: {self.kindliness}" \
-            f"    unkindliness: {self.unkindliness}" \
-            f"    friendliness: {self.friendliness}" \
-            f"    unfriendliness: {self.unfriendliness}" \
-            f"    respectfulness: {self.respectfulness}" \
-            f"    disrespectfulness: {self.disrespectfulness}" \
+        return "<Likability object\n" \
+            f"    kindliness: {self.kindliness}\n" \
+            f"    unkindliness: {self.unkindliness}\n" \
+            f"    friendliness: {self.friendliness}\n" \
+            f"    unfriendliness: {self.unfriendliness}\n" \
+            f"    respectfulness: {self.respectfulness}\n" \
+            f"    disrespectfulness: {self.disrespectfulness}\n" \
             ">"

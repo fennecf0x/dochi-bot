@@ -12,6 +12,7 @@ import math
 import random
 import time
 from dochi.database import get, update, Likability
+import numpy as np
 
 
 class AnalyzeEmotion(CommandItem):
@@ -59,7 +60,6 @@ class AnalyzeEmotion(CommandItem):
                             * math.sqrt((random.random() + 1) / 2)
                             * min(1, reliability ** 3 + 0.2)
                             + state.mood / 10
-                            + (random.random() + 1) / 4
                         )
                         / 4
                         * (5 if starts_with_dochi else 1)
@@ -84,6 +84,8 @@ class AnalyzeEmotion(CommandItem):
                     if emotion == "기대":
                         multipliers = (2, 0, 1, 0, 0, 0)
 
+                    noise = np.random.dirichlet([2] * 6)
+
                     user_id = str(message.author.id)
 
                     likability = get.likability(user_id)
@@ -91,12 +93,17 @@ class AnalyzeEmotion(CommandItem):
                     print(
                         str(
                             Likability(
-                                base(likability.kindliness) * multipliers[0],
-                                base(likability.unkindliness) * multipliers[1],
-                                base(likability.friendliness) * multipliers[2],
-                                base(likability.unfriendliness) * multipliers[3],
-                                base(likability.respectfulness) * multipliers[4],
-                                base(likability.disrespectfulness) * multipliers[5],
+                                base(likability.kindliness) * multipliers[0] + noise[0],
+                                base(likability.unkindliness) * multipliers[1]
+                                + noise[1],
+                                base(likability.friendliness) * multipliers[2]
+                                + noise[2],
+                                base(likability.unfriendliness) * multipliers[3]
+                                + noise[3],
+                                base(likability.respectfulness) * multipliers[4]
+                                + noise[4],
+                                base(likability.disrespectfulness) * multipliers[5]
+                                + noise[5],
                             )
                         )
                     )
@@ -104,17 +111,23 @@ class AnalyzeEmotion(CommandItem):
                     update.likability(
                         user_id,
                         kindliness=likability.kindliness
-                        + base(likability.kindliness) * multipliers[0],
+                        + base(likability.kindliness) * multipliers[0]
+                        + noise[0],
                         unkindliness=likability.unkindliness
-                        + base(likability.unkindliness) * multipliers[1],
+                        + base(likability.unkindliness) * multipliers[1]
+                        + noise[1],
                         friendliness=likability.friendliness
-                        + base(likability.friendliness) * multipliers[2],
+                        + base(likability.friendliness) * multipliers[2]
+                        + noise[2],
                         unfriendliness=likability.unfriendliness
-                        + base(likability.unfriendliness) * multipliers[3],
+                        + base(likability.unfriendliness) * multipliers[3]
+                        + noise[3],
                         respectfulness=likability.respectfulness
-                        + base(likability.respectfulness) * multipliers[4],
+                        + base(likability.respectfulness) * multipliers[4]
+                        + noise[4],
                         disrespectfulness=likability.disrespectfulness
-                        + base(likability.disrespectfulness) * multipliers[5],
+                        + base(likability.disrespectfulness) * multipliers[5]
+                        + noise[5],
                     )
                     print(str(get.likability(user_id)))
 
