@@ -32,7 +32,7 @@ class AnalyzeEmotion(CommandItem):
             return kwargs
 
         content = content.strip()
-        if content == "":
+        if len(content) <= 2:
             return kwargs
 
         headers = {"content-type": "application/json"}
@@ -65,8 +65,9 @@ class AnalyzeEmotion(CommandItem):
                             * min(1, 1.5 * reliability ** 1.3 + 0.5)
                             + state.mood / 3
                         )
-                        / 5
+                        / 6
                         * (5 if starts_with_dochi else 1)
+                        * (1.7 if len(content) > 10 else 1)
                     )
                     base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25)
 
