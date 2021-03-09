@@ -51,4 +51,6 @@ docker run -d \
     dochi-bot-main-app
 
 docker rm -f dochi-bot-main-app-old
+
+docker logs -f dochi-bot-main-app
 ```
