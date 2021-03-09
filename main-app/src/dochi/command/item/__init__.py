@@ -9,6 +9,7 @@ from .strip_whitespaces import StripWhitespaces
 from .list_files import ListFiles
 
 # condition-like
+from .filter import Filter
 from .negation import Negation
 from .one_of import OneOf
 from .exact_string import ExactString
@@ -21,3 +22,4 @@ from .finance import IsTransacting, IsCancellingTransaction, IsCheckingWallet
 # executor-like
 from .send import Send
 from .wait import Wait
+from .analyze_emotion import AnalyzeEmotion

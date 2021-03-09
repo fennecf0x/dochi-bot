@@ -18,6 +18,8 @@ class DochiBot(discord.Client):
     def __init__(self, **options):
         super().__init__(**options)
 
+        is_in_container = os.environ.get("AM_I_IN_A_DOCKER_CONTAINER", False)
+
         # initialize acceptable commands
         random_selection_commands = CommandGroup(
             Command(
@@ -28,10 +30,12 @@ class DochiBot(discord.Client):
             )
         )
 
+        # TODO
         likability_update_commands = CommandGroup()
 
         bori_command = Command(
             ExactString("보리"),
+            Filter(lambda c, m, k: "BORI_PATH" in os.environ),
             Args(path=os.environ["BORI_PATH"], absolute=True),
             ListFiles(),
             MapArgs({"files": "choices"}, is_random=True),
@@ -40,10 +44,23 @@ class DochiBot(discord.Client):
             Send(),
         )
 
+        analyze_emotion_items = lambda starts_with_dochi: [
+            Args(starts_with_dochi=starts_with_dochi),
+            AnalyzeEmotion(),
+        ]
+        emotion_commands = CommandGroup(
+            Command(StartsWithDochi(), *analyze_emotion_items(True)),
+            Command(Negation(StartsWithDochi()), *analyze_emotion_items(False)),
+        )
+
+        test_commands = CommandGroup()
+
         self.group: CommandGroup = CommandGroup(
             random_selection_commands,
             likability_update_commands,
             bori_command,
+            emotion_commands,
+            CommandGroup() if is_in_container else test_commands,
         )
 
     async def on_ready(self):
@@ -62,7 +79,8 @@ class DochiBot(discord.Client):
         if message.guild is None or (
             message.guild.id
             not in [
-                int(guild_id) for guild_id in os.environ["GUILD_ID_LIST"].split(",")
+                int(guild_id)
+                for guild_id in os.environ.get("GUILD_ID_LIST", []).split(",")
             ]
         ):
             return
