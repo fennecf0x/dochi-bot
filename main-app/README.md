@@ -54,3 +54,11 @@ docker rm -f dochi-bot-main-app-old
 
 docker logs -f dochi-bot-main-app
 ```
+
+With venv enabled, the following script will run the test.
+
+```bash
+cd /path/to/main-app
+
+venv/bin/python src/main.py
+```
