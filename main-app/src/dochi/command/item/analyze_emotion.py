@@ -58,10 +58,10 @@ class AnalyzeEmotion(CommandItem):
                             state.mood
                             + 2
                             * math.sqrt((random.random() + 1) / 2)
-                            * min(1, reliability ** 3 + 0.2)
-                            + state.mood / 10
+                            * min(1, 1.5 * reliability ** 2 + 0.15)
+                            + state.mood / 7
                         )
-                        / 4
+                        / 3
                         * (5 if starts_with_dochi else 1)
                     )
                     base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25)
@@ -84,29 +84,11 @@ class AnalyzeEmotion(CommandItem):
                     if emotion == "기대":
                         multipliers = (2, 0, 1, 0, 0, 0)
 
-                    noise = np.random.dirichlet([2] * 6)
+                    noise = np.random.dirichlet([2] * 6) / 4
 
                     user_id = str(message.author.id)
 
                     likability = get.likability(user_id)
-
-                    print(
-                        str(
-                            Likability(
-                                base(likability.kindliness) * multipliers[0] + noise[0],
-                                base(likability.unkindliness) * multipliers[1]
-                                + noise[1],
-                                base(likability.friendliness) * multipliers[2]
-                                + noise[2],
-                                base(likability.unfriendliness) * multipliers[3]
-                                + noise[3],
-                                base(likability.respectfulness) * multipliers[4]
-                                + noise[4],
-                                base(likability.disrespectfulness) * multipliers[5]
-                                + noise[5],
-                            )
-                        )
-                    )
 
                     update.likability(
                         user_id,
