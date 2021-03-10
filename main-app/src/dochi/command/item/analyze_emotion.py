@@ -28,6 +28,9 @@ class AnalyzeEmotion(CommandItem):
         endpoint = "http://svc.saltlux.ai:31781"
         service_id = "11987300804"
 
+        if content == "호감도":
+            return kwargs
+
         if "SALTLUX_KEY" not in os.environ:
             return kwargs
 
