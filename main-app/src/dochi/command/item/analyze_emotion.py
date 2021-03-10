@@ -67,25 +67,25 @@ class AnalyzeEmotion(CommandItem):
                         * (5 if starts_with_dochi else 1)
                         * (1.7 if len(content) > 10 else 1)
                     )
-                    base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25)
+                    base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25) / 3
 
                     multipliers = (0, 0, 0, 0, 0, 0)
                     if emotion == "기쁨":
                         multipliers = (1, 0, 2, 0, 0, 0)
                     if emotion == "신뢰":
-                        multipliers = (1, 0, 0, 0, 2, 0)
+                        multipliers = (1, 0, 0.3, 0, 1.7, 0)
                     if emotion == "공포":
                         multipliers = (0, 1, 1, 0, 0, 1)
                     if emotion == "놀라움":
-                        multipliers = (0, 0, 1, 0, 2, 0)
+                        multipliers = (0, 0, 2, 0, 1, 0)
                     if emotion == "슬픔":
-                        multipliers = (1, 0, 0, 1, 0, 0)
+                        multipliers = (1, 0, 0.7, 0, 0, 0.3)
                     if emotion == "혐오":
                         multipliers = (0, 0, 0, 1, 0, 1)
                     if emotion == "분노":
-                        multipliers = (0, 1, 0, 0, 0, 1)
+                        multipliers = (0, 1, 1, 0, 0, 1)
                     if emotion == "기대":
-                        multipliers = (2, 0, 1, 0, 0, 0)
+                        multipliers = (1.2, 0, 1.5, 0, 0, 0)
 
                     noise = (np.random.dirichlet([2] * 6) + [0.07, -0.07] * 3) / 2
 
