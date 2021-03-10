@@ -16,7 +16,8 @@ from .command import *
 
 class DochiBot(discord.Client):
     def __init__(self, **options):
-        super().__init__(**options)
+        intents = discord.Intents.all()
+        super().__init__(**options, intents=intents)
 
         is_in_container = os.environ.get("AM_I_IN_A_DOCKER_CONTAINER", False)
 
