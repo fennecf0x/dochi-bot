@@ -30,10 +30,10 @@ class VsSelection(CommandItem):
         choices = [item for item in choices if item != ""]
         
         if vs_front:
-            choices[0] = "vs" + choices[0]
+            choices[0] = "vs" + (choices[0] if len(choices) > 0 else "")
         
         if vs_back:
-            choices[-1] = choices[-1] + "vs"
+            choices[-1] = (choices[-1] if len(choices) > 0 else "") + "vs"
         
         choices = [item.strip() for item in choices]
 
