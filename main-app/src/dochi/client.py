@@ -52,6 +52,13 @@ class DochiBot(discord.Client):
         emotion_commands = CommandGroup(
             Command(StartsWithDochi(), *analyze_emotion_items(True)),
             Command(Negation(StartsWithDochi()), *analyze_emotion_items(False)),
+            Command(
+                StartsWithDochi(),
+                ExactString("호감도"),
+                SerializeLikability(),
+                MapArgs({"likability": "content"}),
+                Send(),
+            ),
         )
 
         test_commands = CommandGroup()
@@ -67,7 +74,9 @@ class DochiBot(discord.Client):
     async def on_ready(self):
         # add jobs to the scheduler
         schedule.add_job(schedule.change_mood, args=[self], hours=1)
-        schedule.add_job(schedule.decrease_likability, args=[self], minutes=30, now=False)
+        schedule.add_job(
+            schedule.decrease_likability, args=[self], minutes=30, now=False
+        )
 
         await self.change_presence(status=discord.Status.offline)
         print("Logged on as", self.user)

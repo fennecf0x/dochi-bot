@@ -54,8 +54,6 @@ class AnalyzeEmotion(CommandItem):
                         json_resp["Result"][0][0],
                     )
 
-                    print(emotion, reliability)
-
                     random.seed(time.time())
                     base_score = lambda: (
                         (
@@ -116,7 +114,6 @@ class AnalyzeEmotion(CommandItem):
                         + base(likability.disrespectfulness) * multipliers[5]
                         + noise[5],
                     )
-                    print(str(get.likability(user_id)))
 
         except Exception as e:
             print("error", e)
