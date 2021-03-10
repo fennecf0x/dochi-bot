@@ -31,9 +31,6 @@ class DochiBot(discord.Client):
             )
         )
 
-        # TODO
-        likability_update_commands = CommandGroup()
-
         bori_command = Command(
             ExactString("보리"),
             Filter(lambda c, m, k: "BORI_PATH" in os.environ),
@@ -45,29 +42,30 @@ class DochiBot(discord.Client):
             Send(),
         )
 
+        show_likability_command = Command(
+            StartsWithDochi(),
+            ExactString("호감도"),
+            Args(ignore_likability_update=True),
+            SerializeLikability(),
+            MapArgs({"likability": "content"}),
+            Send(),
+        )
+
         analyze_emotion_items = lambda starts_with_dochi: [
             Args(starts_with_dochi=starts_with_dochi),
             AnalyzeEmotion(),
         ]
-        emotion_commands = CommandGroup(
+        self.likability_update_commands = CommandGroup(
             Command(StartsWithDochi(), *analyze_emotion_items(True)),
             Command(Negation(StartsWithDochi()), *analyze_emotion_items(False)),
-            Command(
-                StartsWithDochi(),
-                ExactString("호감도"),
-                SerializeLikability(),
-                MapArgs({"likability": "content"}),
-                Send(),
-            ),
         )
 
         test_commands = CommandGroup()
 
         self.group: CommandGroup = CommandGroup(
             random_selection_commands,
-            likability_update_commands,
             bori_command,
-            emotion_commands,
+            show_likability_command,
             CommandGroup() if is_in_container else test_commands,
         )
 
@@ -97,4 +95,6 @@ class DochiBot(discord.Client):
             return
 
         # accept messages
-        await self.group(self, message)
+        ignore_likability_update = await self.group(self, message)
+        if not ignore_likability_update:
+            await self.likability_update_commands(self, message)

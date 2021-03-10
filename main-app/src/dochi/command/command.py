@@ -13,6 +13,8 @@ class Command:
         kwargs: Optional[dict] = None
         content: str = message.content
 
+        ignore_likability_update = False
+
         for item in self.items:
             try:
                 kwargs = kwargs or {}
@@ -26,9 +28,17 @@ class Command:
 
                 if kwargs is not None and "is_satisfied" in kwargs:
                     if not kwargs["is_satisfied"]:
-                        return
+                        return ignore_likability_update
 
                     kwargs.pop("is_satisfied", None)
 
+                if kwargs is not None and "ignore_likability_update" in kwargs:
+                    if kwargs["ignore_likability_update"]:
+                        ignore_likability_update = True
+
+                    kwargs.pop("ignore_likability_update", False)
+
             except Exception as e:
                 raise e
+
+        return ignore_likability_update

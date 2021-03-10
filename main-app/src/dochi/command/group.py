@@ -21,4 +21,5 @@ class CommandGroup:
         return flatten([[command] if type(command) == Command else command.commands for command in self._commands])
         
     async def __call__(self, client: discord.Client, message: discord.Message):
-        await asyncio.gather(*[command(client, message) for command in self.commands])
+        ignore_likability_update_list = await asyncio.gather(*[command(client, message) for command in self.commands])
+        return any(ignore_likability_update_list)
