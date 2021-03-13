@@ -15,8 +15,9 @@ peewee==3.14.1
 # korean support
 tossi==0.3.1
 
-# numpy-like
+# math
 numpy==1.20.1
+gmpy2==2.0.8
 
 # scheduling
 APScheduler==3.7.0

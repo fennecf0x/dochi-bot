@@ -12,6 +12,7 @@ from .schedule import schedule
 from .state import state, State
 from .database import get, currency_type_ko, CurrencyType
 from .command import *
+from dochi.command.patterns import similar_character_pattern
 
 
 class DochiBot(discord.Client):
@@ -42,6 +43,20 @@ class DochiBot(discord.Client):
             Send(),
         )
 
+        줘 = similar_character_pattern("줘")
+
+        pi_command = Command(
+            StartsWithDochi(),
+            MatchRegex(rf"(원주율|파이)\s*(((10|십)|(16|십육))진법(으로)?)?(\d*)번째\s*자리(알려{줘})?", 5, 7),
+            MapArgs(lambda c, m, k: {
+                "base": 16 if k["groups"][0] is not None else 10,
+                "n": int(k["groups"][1]),
+            }),
+            GetNthDigitOfPi(),
+            MapArgs({"digit": "content"}),
+            Send(),
+        )
+
         show_likability_command = Command(
             StartsWithDochi(),
             ExactString("호감도"),
@@ -66,6 +81,7 @@ class DochiBot(discord.Client):
             random_selection_commands,
             bori_command,
             show_likability_command,
+            pi_command,
             CommandGroup() if is_in_container else test_commands,
         )
 

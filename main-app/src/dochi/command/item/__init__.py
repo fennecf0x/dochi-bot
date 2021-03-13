@@ -8,6 +8,7 @@ from .sample_from import SampleFrom
 from .strip_whitespaces import StripWhitespaces
 from .list_files import ListFiles
 from .serialize_likability import SerializeLikability
+from .get_nth_digit_of_pi import GetNthDigitOfPi
 
 # condition-like
 from .filter import Filter
