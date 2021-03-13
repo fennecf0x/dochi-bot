@@ -150,12 +150,14 @@ class GetNthDigitOfPi(CommandItem):
         if base not in [10, 16] or n < 0:
             return kwargs
 
-        if base == 10:
+        if base == 10 and n > 1000000:
+            digit = "🥲"
+
+        elif base == 10:
             digit = str(pi_chudnovsky_bs(n))
-            print(digit)
             digit = digit[-1]
 
-        if base == 16:
+        elif base == 16:
             digit = str(get_nth_digit_hex(n - 1)) if n >= 1 else 3
 
         return {**kwargs, "digit": digit}
