@@ -158,6 +158,6 @@ class GetNthDigitOfPi(CommandItem):
             digit = digit[-1]
 
         elif base == 16:
-            digit = str(get_nth_digit_hex(n - 1)) if n >= 1 else 3
+            digit = "%X" % get_nth_digit_hex(n - 1) if n >= 1 else 3
 
         return {**kwargs, "digit": digit}
