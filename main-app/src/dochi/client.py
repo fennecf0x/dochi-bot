@@ -47,10 +47,10 @@ class DochiBot(discord.Client):
 
         pi_command = Command(
             StartsWithDochi(),
-            MatchRegex(rf"(원주율|파이)\s*(((10|십)|(16|십육))진법(으로)?)?(\d*)번째\s*자리(알려{줘})?", 5, 7),
+            MatchRegex(rf"(((10|십)|(16|십육))진법(으로)?)?\s*(원주율|파이)\s*(((10|십)|(16|십육))진법(으로)?)?\s*(\d*)번째\s*자리(알려{줘})?", 4, 10, 12),
             MapArgs(lambda c, m, k: {
-                "base": 16 if k["groups"][0] is not None else 10,
-                "n": int(k["groups"][1]),
+                "base": 16 if k["groups"][0] is not None or k["groups"][1] is not None else 10,
+                "n": int(k["groups"][2]),
             }),
             GetNthDigitOfPi(),
             MapArgs({"digit": "content"}),
