@@ -2,12 +2,7 @@ from typing import TypedDict, Tuple, Literal, Union, Optional, cast
 import re
 import discord
 from .item import CommandItem
-from ..patterns import similar_character_pattern
-
-
-줘 = similar_character_pattern("줘")
-게 = similar_character_pattern("게")
-했 = similar_character_pattern("했")
+from ..patterns import 줘, 게, 했
 
 
 """

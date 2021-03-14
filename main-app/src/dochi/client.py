@@ -12,7 +12,7 @@ from .schedule import schedule
 from .state import state, State
 from .database import get, currency_type_ko, CurrencyType
 from .command import *
-from dochi.command.patterns import similar_character_pattern
+from dochi.command.patterns import digits_of_pi
 
 
 class DochiBot(discord.Client):
@@ -43,15 +43,17 @@ class DochiBot(discord.Client):
             Send(),
         )
 
-        줘 = similar_character_pattern("줘")
-
         pi_command = Command(
             StartsWithDochi(),
-            MatchRegex(rf"(((10|십)|(16|십육))진법(으로)?)?\s*(원주율|파이)\s*(((10|십)|(16|십육))진법(으로)?)?\s*(\d*)번째\s*자리(알려{줘})?", 4, 10, 12),
-            MapArgs(lambda c, m, k: {
-                "base": 16 if k["groups"][0] is not None or k["groups"][1] is not None else 10,
-                "n": int(k["groups"][2]),
-            }),
+            MatchRegex(digits_of_pi, 4, 10, 12),
+            MapArgs(
+                lambda c, m, k: {
+                    "base": 16
+                    if k["groups"][0] is not None or k["groups"][1] is not None
+                    else 10,
+                    "n": int(k["groups"][2]),
+                }
+            ),
             GetNthDigitOfPi(),
             MapArgs({"digit": "content"}),
             Send(),
