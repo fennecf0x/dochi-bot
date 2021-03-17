@@ -12,7 +12,7 @@ from .schedule import schedule
 from .state import state, State
 from .database import get, currency_type_ko, CurrencyType
 from .command import *
-from dochi.command.patterns import digits_of_pi
+from dochi.command.patterns import digits_of_pi, 줘
 
 
 class DochiBot(discord.Client):
@@ -77,14 +77,26 @@ class DochiBot(discord.Client):
             Command(Negation(StartsWithDochi()), *analyze_emotion_items(False)),
         )
 
-        test_commands = CommandGroup()
+        test_commands = CommandGroup(
+            Command(
+                ExactString("svg"),
+                Args(svg="hihi"),
+                Send(),
+            ),
+            Command(
+                StartsWithDochi(),
+                MatchRegex(rf"(.*?)\s*읽어{줘}", 1),
+                MapArgs({"groups": "content"}),
+                Shout(),
+            )
+        )
 
         self.group: CommandGroup = CommandGroup(
             random_selection_commands,
             bori_command,
             show_likability_command,
             pi_command,
-            CommandGroup() if is_in_container else test_commands,
+            test_commands,
         )
 
     async def on_ready(self):

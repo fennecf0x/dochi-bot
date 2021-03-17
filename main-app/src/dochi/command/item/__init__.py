@@ -23,5 +23,6 @@ from .finance import IsTransacting, IsCancellingTransaction, IsCheckingWallet
 
 # executor-like
 from .send import Send
+from .shout import Shout
 from .wait import Wait
 from .analyze_emotion import AnalyzeEmotion

@@ -21,3 +21,8 @@ gmpy2==2.0.8
 
 # scheduling
 APScheduler==3.7.0
+
+# images
+pycairo==1.20.0
+gobject==0.1.0
+PyGObject==3.38.0
