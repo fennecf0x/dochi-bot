@@ -1,5 +1,3 @@
-git pull
-
 DOCKER_BUILDKIT=1 docker build -t dochi-bot-main-app "$(pwd)"/main-app
 
 docker rename dochi-bot-main-app dochi-bot-main-app-old
@@ -12,3 +10,4 @@ docker run -d \
     dochi-bot-main-app
 
 docker rm -f dochi-bot-main-app-old
+docker rmi -f $(docker images -f "dangling=true" -q)
