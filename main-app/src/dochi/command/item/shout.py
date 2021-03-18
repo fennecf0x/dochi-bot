@@ -62,7 +62,7 @@ class Shout(CommandItem):
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://kakaoi-newtone-openapi.kakao.com/v1/synthesize",
-                data=f"""<speak><voice name="WOMAN_READ_CALM"><break time="500ms" /><prosody rate="slow">{content}</prosody><break time="500ms" /></voice></speak>""",
+                data=f"""<speak><prosody rate="slow"><voice name="WOMAN_READ_CALM">{content}</voice></prosody></speak>""",
                 headers={
                     "Content-Type": "application/xml",
                     "Authorization": f"KakaoAK {os.environ['KAKAO_API_KEY']}",
