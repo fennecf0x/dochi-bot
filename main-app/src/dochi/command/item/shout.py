@@ -84,7 +84,7 @@ class Shout(CommandItem):
                         print(e)
 
                 async def callback_coro():
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(1)
                     await voice_client.disconnect(force=True)
 
                 def callback(error: Optional[Exception] = None):
@@ -105,6 +105,7 @@ class Shout(CommandItem):
                 
                 print("filename", filename)
 
+                await asyncio.sleep(1)
 
                 try:
                     voice_client.play(discord.FFmpegPCMAudio(filename), after=callback)
