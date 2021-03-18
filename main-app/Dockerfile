@@ -5,7 +5,7 @@ FROM python:3.9-slim
 
 # Install tools for building wheels
 RUN apt-get update
-RUN apt-get -y install build-essential make gcc libgmp3-dev libmpc-dev pkg-config
+RUN apt-get -y install build-essential make gcc libgmp3-dev libmpc-dev pkg-config libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
