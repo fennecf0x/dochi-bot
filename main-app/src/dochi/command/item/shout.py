@@ -62,7 +62,7 @@ class Shout(CommandItem):
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://kakaoi-newtone-openapi.kakao.com/v1/synthesize",
-                data=f"""<speak><voice name="WOMAN_READ_CALM">{content}</voice></speak>""",
+                data=f"""<speak><voice name="WOMAN_READ_CALM"><break time="500ms" /><prosody rate="slow">{content}</prosody><break time="500ms" /></voice></speak>""",
                 headers={
                     "Content-Type": "application/xml",
                     "Authorization": f"KakaoAK {os.environ['KAKAO_API_KEY']}",
@@ -84,7 +84,7 @@ class Shout(CommandItem):
                         print(e)
 
                 async def callback_coro():
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
                     await voice_client.disconnect(force=True)
 
                 def callback(error: Optional[Exception] = None):
@@ -104,8 +104,6 @@ class Shout(CommandItem):
                         cleanup()
                 
                 print("filename", filename)
-
-                await asyncio.sleep(1)
 
                 try:
                     voice_client.play(discord.FFmpegPCMAudio(filename), after=callback)
