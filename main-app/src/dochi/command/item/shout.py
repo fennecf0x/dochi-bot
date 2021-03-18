@@ -107,7 +107,7 @@ class Shout(CommandItem):
 
 
                 try:
-                    voice_client.play(discord.FFmpegOpusAudio(filename), after=callback)
+                    voice_client.play(discord.FFmpegPCMAudio(filename), after=callback)
                 except Exception as e:
                     print("ERROR during playing audio")
                     print(e)
