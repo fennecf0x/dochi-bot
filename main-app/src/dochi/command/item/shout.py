@@ -83,12 +83,16 @@ class Shout(CommandItem):
                         print("ERROR during audio file deletion")
                         print(e)
 
+                async def callback_coro():
+                    await asyncio.sleep(2)
+                    await voice_client.disconnect(force=True)
+
                 def callback(error: Optional[Exception] = None):
                     if error is not None:
                         print("ERROR during voice callback")
                         print(error)
                         
-                    coro = voice_client.disconnect(force=True)
+                    coro = callback_coro()
                     fut = asyncio.run_coroutine_threadsafe(coro, client.loop)
                     try:
                         fut.result()
