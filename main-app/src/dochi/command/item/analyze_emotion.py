@@ -67,7 +67,7 @@ class AnalyzeEmotion(CommandItem):
 
             except Exception as e:
                 print("error", e)
-                return kwargs
+                emotion, reliability = None, 0
 
         random.seed(time.time())
         base_score = lambda: (
