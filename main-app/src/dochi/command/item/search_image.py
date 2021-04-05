@@ -2,6 +2,7 @@ from typing import TypedDict
 import re
 import os
 import discord
+from urllib.request import urlopen
 import hashlib
 import random
 import requests
@@ -24,8 +25,13 @@ class SearchImage(CommandItem):
             while google_result != []:
                 n = len(google_result)
                 r = random.randint(0, n - 1)
-                if requests.get(google_result[r]).status_code < 400:
-                    return {**kwargs, "content": "", "url": google_result[r]}
+
+                try:
+                    if urlopen(google_result[r]).getcode() < 400:
+                        return {**kwargs, "content": "", "url": google_result[r]}
+
+                except:
+                    pass
 
             return {**kwargs, "content": ":smiling_face_with_tear:"}
 
@@ -35,8 +41,13 @@ class SearchImage(CommandItem):
             while duckduckgo_result != []:
                 n = len(duckduckgo_result)
                 r = random.randint(0, n - 1)
-                if requests.get(duckduckgo_result[r]).status_code < 400:
-                    return {**kwargs, "content": "", "url": duckduckgo_result[r]}
+
+                try:
+                    if urlopen(duckduckgo_result[r]).getcode() < 400:
+                        return {**kwargs, "content": "", "url": duckduckgo_result[r]}
+
+                except:
+                    pass
 
             return {**kwargs, "content": ":smiling_face_with_tear:"}
 
