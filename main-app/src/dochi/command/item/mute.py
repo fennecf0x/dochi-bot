@@ -14,7 +14,7 @@ class Mute(CommandItem):
         client: discord.Client,
         message: discord.Message,
         *,
-        userid: int,
+        user_id: int,
         **kwargs,
     ):
         """
@@ -22,7 +22,7 @@ class Mute(CommandItem):
         """
 
         if self.mute:
-            state.muted.add(userid)
+            state.muted.add(user_id)
 
         else:
-            state.muted.remove(userid)
+            state.muted.remove(user_id)

@@ -21,7 +21,7 @@ from .starts_with import StartsWith
 from .starts_with_dochi import StartsWithDochi
 from .match_regex import MatchRegex
 from .vs_selection import VsSelection
-from .finance import IsTransacting, IsCancellingTransaction, IsCheckingWallet
+from .finance import IsTransacting, IsCancellingTransaction, IsCheckingWallet, ChangeFinance, CheckWallet
 from .is_admin import IsAdmin
 
 # executor-like
@@ -31,3 +31,4 @@ from .wait import Wait
 from .mute import Mute
 from .change_nickname import ChangeNickname
 from .analyze_emotion import AnalyzeEmotion
+from .ff_lottery import StartFFLottery, PlayFFLottery, NotifyFFLottery

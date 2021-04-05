@@ -89,6 +89,32 @@ class DochiBot(discord.Client):
             Send(),
         )
 
+        ff_lottery_commands = CommandGroup(
+            Command(
+                StartsWithDochi(),
+                ExactString("복권"),
+                StartFFLottery(),
+                NotifyFFLottery(),
+                Args(reply=True),
+                Send(),
+            ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                OneOf(MatchRegex(r"^복권\s+(.*?)$", 1), Filter(lambda c, m, k: True)),
+                MapArgs(
+                    lambda l, m, k: {
+                        "content": k["groups" if "groups" in k else "content"].lower()
+                    }
+                ),
+                MatchRegex(r"^[a-i]$"),
+                MapArgs({"content": "move"}),
+                PlayFFLottery(),
+                NotifyFFLottery(),
+                Args(reply=True),
+                Send(),
+            ),
+        )
+
         analyze_emotion_items = lambda starts_with_dochi: [
             Args(starts_with_dochi=starts_with_dochi),
             AnalyzeEmotion(),
@@ -102,13 +128,13 @@ class DochiBot(discord.Client):
             Command(
                 IsAdmin(),
                 MatchRegex(r"^\/mute\s+<@!(\d+?)>$", 1),
-                MapArgs(lambda c, m, k: {"userid": int(k["groups"])}),
+                MapArgs(lambda c, m, k: {"user_id": int(k["groups"])}),
                 Mute(True),
             ),
             Command(
                 IsAdmin(),
                 MatchRegex(r"^\/unmute\s+<@!(\d+?)>$", 1),
-                MapArgs(lambda c, m, k: {"userid": int(k["groups"])}),
+                MapArgs(lambda c, m, k: {"user_id": int(k["groups"])}),
                 Mute(False),
             ),
         )
@@ -120,7 +146,27 @@ class DochiBot(discord.Client):
             ChangeNickname(),
         )
 
+        finance_commands = CommandGroup(
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StripWhitespaces(),
+                IsCheckingWallet(),
+                CheckWallet(),
+                Send(),
+            ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                ExactString("돈줘"),
+                ChangeFinance(
+                    currency_type=CurrencyType.MONEY, amount=100, incremental=True
+                ),
+                Args(content="그랭"),
+                Send(),
+            ),
+        )
+
         test_commands = CommandGroup(
+            finance_commands,
             Command(
                 ExactString("svg"),
                 Args(svg="hihi"),
@@ -142,6 +188,7 @@ class DochiBot(discord.Client):
             pi_command,
             search_image_command,
             dotnick_command,
+            ff_lottery_commands,
             test_commands,
         )
 

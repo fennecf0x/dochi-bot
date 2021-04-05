@@ -1,8 +1,12 @@
 from typing import TypedDict, Tuple, Literal, Union, Optional, cast
 import re
+import tossi
+import numpy as np
 import discord
 from .item import CommandItem
 from ..patterns import 줘, 게, 했
+from ...database import get, update
+from ...database.types import CurrencyType, currency_name_type, currency_type_ko
 
 
 """
@@ -40,7 +44,7 @@ def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
 
 
 class IsTransacting(CommandItem):
-    async def __call__( # type: ignore
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
@@ -81,7 +85,7 @@ def extract_cancellation_data(string: str) -> Optional[CancellationReturnType]:
 
 
 class IsCancellingTransaction(CommandItem):
-    async def __call__( # type: ignore
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
@@ -103,7 +107,7 @@ def extract_check_wallet_data(string: str) -> bool:
 
 
 class IsCheckingWallet(CommandItem):
-    async def __call__( # type: ignore
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
@@ -112,3 +116,57 @@ class IsCheckingWallet(CommandItem):
         **kwargs,
     ):
         return {**kwargs, "is_satisfied": extract_check_wallet_data(content)}
+
+
+class ChangeFinance(CommandItem):
+    def __init__(self, currency_type: CurrencyType, amount: float, incremental: bool):
+        self.currency_type = currency_type
+        self.amount = amount
+        self.incremental = incremental
+
+    async def __call__(  # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        **kwargs,
+    ):
+        base = 0
+
+        if self.incremental:
+            currencies = get.currencies(str(message.author.id))
+            money_currency = next(
+                (
+                    currency
+                    for currency in currencies
+                    if currency.currency_type == self.currency_type.name
+                ),
+                None,
+            )
+            base = money_currency.amount if money_currency is not None else 0
+
+        update.currency(
+            str(message.author.id),
+            currency_type=self.currency_type,
+            amount=base + self.amount,
+        )
+
+        return kwargs
+
+
+class CheckWallet(CommandItem):
+    async def __call__(  # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        **kwargs,
+    ):
+        currencies = get.currencies(str(message.author.id))
+        if currencies == []:
+            content = "돈이 없어" 
+        else:
+            content = ", ".join(
+                f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
+                for currency in currencies
+            ) + " 있어"
+
+        return {**kwargs, "content": content}
