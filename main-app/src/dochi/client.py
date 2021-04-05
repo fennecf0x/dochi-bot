@@ -23,6 +23,16 @@ class DochiBot(discord.Client):
         is_in_container = os.environ.get("AM_I_IN_A_DOCKER_CONTAINER", False)
 
         # initialize acceptable commands
+        invitation_command = CommandGroup(
+            Command(
+                StartsWithDochi(),
+                MatchRegex(f"초대해{줘}"),
+                Invite(),
+                MapArgs({"link": "content"}),
+                Send(),
+            )
+        )
+
         random_selection_commands = CommandGroup(
             Command(
                 VsSelection(),
@@ -92,6 +102,7 @@ class DochiBot(discord.Client):
         )
 
         self.group: CommandGroup = CommandGroup(
+            invitation_command,
             random_selection_commands,
             bori_command,
             show_likability_command,

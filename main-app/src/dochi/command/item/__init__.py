@@ -6,6 +6,7 @@ from .args import Args
 from .map_args import MapArgs
 from .sample_from import SampleFrom
 from .strip_whitespaces import StripWhitespaces
+from .invite import Invite
 from .list_files import ListFiles
 from .serialize_likability import SerializeLikability
 from .get_nth_digit_of_pi import GetNthDigitOfPi
