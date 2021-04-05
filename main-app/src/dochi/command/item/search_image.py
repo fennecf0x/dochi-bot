@@ -21,16 +21,24 @@ class SearchImage(CommandItem):
         google_result = search_google(query)
 
         if google_result is not None:
-            n = len(google_result)
-            r = random.randint(0, n - 1)
-            return {**kwargs, "content": "", "url": google_result[r]}
+            while google_result != []:
+                n = len(google_result)
+                r = random.randint(0, n - 1)
+                if requests.get(google_result[r]).status_code < 400:
+                    return {**kwargs, "content": "", "url": google_result[r]}
+
+            return {**kwargs, "content": ":smiling_face_with_tear:"}
 
         duckduckgo_result = search_duckduckgo(query)
 
         if duckduckgo_result is not None:
-            n = len(duckduckgo_result)
-            r = random.randint(0, n - 1)
-            return {**kwargs, "content": "", "url": duckduckgo_result[r]}
+            while duckduckgo_result != []:
+                n = len(duckduckgo_result)
+                r = random.randint(0, n - 1)
+                if requests.get(duckduckgo_result[r]).status_code < 400:
+                    return {**kwargs, "content": "", "url": duckduckgo_result[r]}
+
+            return {**kwargs, "content": ":smiling_face_with_tear:"}
 
         return {**kwargs, "content": ":smiling_face_with_tear:"}
 
