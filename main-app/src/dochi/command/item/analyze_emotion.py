@@ -78,11 +78,11 @@ class AnalyzeEmotion(CommandItem):
                 * min(1, 1.5 * reliability ** 1.3 + 0.5)
                 + state.mood / 3
             )
-            / 6
-            * (5 if starts_with_dochi else 1)
+            / 8
+            * (4 if starts_with_dochi else 1)
             * (1.7 if len(content) > 10 else 1)
         )
-        base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25) / 3
+        base = lambda v: max(base_score(), 0) / math.sqrt(0.0375 * v + 0.25) / 7
 
         multipliers = (0, 0, 0, 0, 0, 0)
         if emotion == "기쁨":
@@ -102,7 +102,7 @@ class AnalyzeEmotion(CommandItem):
         if emotion == "기대":
             multipliers = (1.2, 0, 1.5, 0, 0, 0)
 
-        noise = (np.random.dirichlet([2] * 6) + [0.07, -0.07] * 3) / 2
+        noise = (np.random.dirichlet([2] * 6) + [0.01, -0.04] * 3) / 2
 
         user_id = str(message.author.id)
 
