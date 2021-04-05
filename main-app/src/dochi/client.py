@@ -152,15 +152,13 @@ class DochiBot(discord.Client):
 
         await self.mute_commands(self, message)
 
-        print("muted", state.muted)
-
         try:
             if message.author.id in state.muted:
                 await message.delete()
                 return
 
         except Exception as e:
-            print("EXC", e)
+            print("Exception during deleting message:", e)
 
         finally:
             # accept messages
