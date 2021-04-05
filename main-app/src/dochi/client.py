@@ -12,7 +12,7 @@ from .schedule import schedule
 from .state import state, State
 from .database import get, currency_type_ko, CurrencyType
 from .command import *
-from dochi.command.patterns import digits_of_pi, 줘
+from dochi.command.patterns import digits_of_pi, 줘, 봐, 뭐, 뭘
 
 
 class DochiBot(discord.Client):
@@ -78,6 +78,17 @@ class DochiBot(discord.Client):
             Send(),
         )
 
+        search_image_command = Command(
+            StartsWithDochi(),
+            MatchRegex(
+                rf"(.*?)(\s*(검색(해\s*{줘}?{봐}?)|찾아{봐}?{줘}?{봐}?)|(이|가|은|는)?\s*({뭐}야|{뭘}까)\?*)$",
+                1,
+            ),
+            MapArgs({"groups": "query"}),
+            SearchImage(),
+            Send(),
+        )
+
         analyze_emotion_items = lambda starts_with_dochi: [
             Args(starts_with_dochi=starts_with_dochi),
             AnalyzeEmotion(),
@@ -122,6 +133,7 @@ class DochiBot(discord.Client):
             bori_command,
             show_likability_command,
             pi_command,
+            search_image_command,
             test_commands,
         )
 

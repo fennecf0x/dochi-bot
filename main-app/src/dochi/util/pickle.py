@@ -1,9 +1,10 @@
+import os
 from os import path, makedirs
 import errno
 import pickle
 
 
-def save_pickle(dict, p, name):
+def save_pickle(obj, p, name):
     filename = path.join(os.environ["CACHE_PATH"], p, name + '.pkl')
     if not path.exists(path.dirname(filename)):
         try:
@@ -13,7 +14,7 @@ def save_pickle(dict, p, name):
                 raise
 
     with open(filename, 'wb') as f:
-        pickle.dump(dict, f, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
 def load_pickle(p, name):

@@ -10,6 +10,7 @@ from .invite import Invite
 from .list_files import ListFiles
 from .serialize_likability import SerializeLikability
 from .get_nth_digit_of_pi import GetNthDigitOfPi
+from .search_image import SearchImage
 
 # condition-like
 from .filter import Filter
