@@ -18,4 +18,4 @@ class ChangeNickname(CommandItem):
         change the nickname
         """
 
-        await message.guild.me.edit(username=nickname)
+        await message.guild.me.edit(nick=nickname)
