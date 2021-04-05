@@ -113,6 +113,13 @@ class DochiBot(discord.Client):
             ),
         )
 
+        dotnick_command = Command(
+            IsAdmin(),
+            MatchRegex(r"^\/dotnick\s*(.*?)$", 1),
+            MapArgs(lambda c, m, k: {"nickname": k["groups"]}),
+            ChangeNickname(),
+        )
+
         test_commands = CommandGroup(
             Command(
                 ExactString("svg"),
@@ -134,6 +141,7 @@ class DochiBot(discord.Client):
             show_likability_command,
             pi_command,
             search_image_command,
+            dotnick_command,
             test_commands,
         )
 

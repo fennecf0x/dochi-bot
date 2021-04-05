@@ -29,4 +29,5 @@ from .send import Send
 from .shout import Shout
 from .wait import Wait
 from .mute import Mute
+from .change_nickname import ChangeNickname
 from .analyze_emotion import AnalyzeEmotion
