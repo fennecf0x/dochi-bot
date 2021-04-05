@@ -1,6 +1,7 @@
 # base
 wheel
 aiohttp==3.7.4
+requests==2.25.1
 ujson==4.0.2
 
 # discord
