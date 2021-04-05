@@ -21,9 +21,11 @@ from .starts_with_dochi import StartsWithDochi
 from .match_regex import MatchRegex
 from .vs_selection import VsSelection
 from .finance import IsTransacting, IsCancellingTransaction, IsCheckingWallet
+from .is_admin import IsAdmin
 
 # executor-like
 from .send import Send
 from .shout import Shout
 from .wait import Wait
+from .mute import Mute
 from .analyze_emotion import AnalyzeEmotion

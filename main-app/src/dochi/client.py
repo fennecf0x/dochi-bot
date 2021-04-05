@@ -87,7 +87,23 @@ class DochiBot(discord.Client):
             Command(Negation(StartsWithDochi()), *analyze_emotion_items(False)),
         )
 
+        mute_command = Command(
+            IsAdmin(),
+            MatchRegex(r"^\/mute\s+<@!(\d+?)>$", 1),
+            MapArgs(lambda c, m, k: { "userid": int(k["groups"]) }),
+            Mute(True),
+        )
+
+        unmute_command = Command(
+            IsAdmin(),
+            MatchRegex(r"^\/unmute\s+<@!(\d+?)>$", 1),
+            MapArgs(lambda c, m, k: { "userid": int(k["groups"]) }),
+            Mute(False),
+        )
+
         test_commands = CommandGroup(
+            mute_command,
+            unmute_command,
             Command(
                 ExactString("svg"),
                 Args(svg="hihi"),
@@ -135,7 +151,13 @@ class DochiBot(discord.Client):
         ):
             return
 
-        # accept messages
-        ignore_likability_update = await self.group(self, message)
-        if not ignore_likability_update:
-            await self.likability_update_commands(self, message)
+        try:
+            if message.author.id in state.muted:
+                await message.delete()
+                return
+        
+        finally:
+            # accept messages
+            ignore_likability_update = await self.group(self, message)
+            if not ignore_likability_update:
+                await self.likability_update_commands(self, message)
