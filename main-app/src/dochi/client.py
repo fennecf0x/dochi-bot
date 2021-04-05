@@ -135,10 +135,6 @@ class DochiBot(discord.Client):
         ):
             return
 
-        if message.author.id == 489348057398509568:
-            await message.delete()
-            return
-
         # accept messages
         ignore_likability_update = await self.group(self, message)
         if not ignore_likability_update:
