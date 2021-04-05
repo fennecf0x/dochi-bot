@@ -24,6 +24,10 @@ def currencies(user_id: str) -> List[model.Currency]:
     return list(user(user_id).currencies)
 
 
+def inventory(user_id: str) -> List[model.Item]:
+    return list(user(user_id).inventory)
+
+
 def likability(user_id: str) -> Likability:
     u = user(user_id)
 

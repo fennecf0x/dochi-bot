@@ -39,6 +39,7 @@ class User(Base):
     disrespectfulness = peewee.FloatField(default=0.0)
 
     # currencies: List[Currency]
+    # inventory: List[Item]
 
 
 class Currency(Base):
@@ -54,3 +55,18 @@ class Currency(Base):
 
     """amount: real"""
     amount = peewee.FloatField(default=0.0)
+
+
+class Item(Base):
+    """
+    Item model
+    """
+
+    """User: User"""
+    user = peewee.ForeignKeyField(User, backref="inventory")
+
+    """item type: string"""
+    item_type = peewee.TextField()
+
+    """amount: int"""
+    amount = peewee.IntegerField(default=0)

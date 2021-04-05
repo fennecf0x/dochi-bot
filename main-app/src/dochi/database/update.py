@@ -52,3 +52,22 @@ def currency(
         )
 
         return currency
+
+
+def inventory(
+    user_id: str,
+    *,
+    item_type: str,
+    amount: int,
+) -> model.Currency:
+    try:
+        item = model.Item.get(user_id=user_id, item_type=item_type)
+        item.amount = amount
+        item.save()
+
+        return item
+
+    except model.Item.DoesNotExist:  # pylint: disable=maybe-no-member
+        item = model.Item.create(user_id=user_id, item_type=item_type, amount=amount)
+
+        return item
