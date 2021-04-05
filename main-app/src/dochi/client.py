@@ -150,7 +150,7 @@ class DochiBot(discord.Client):
         ):
             return
 
-        self.mute_commands(self, message)
+        await self.mute_commands(self, message)
 
         print("muted", state.muted)
 
