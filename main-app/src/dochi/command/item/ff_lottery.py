@@ -48,6 +48,7 @@ class NotifyFFLottery(CommandItem):
             content = f"{points}원을 얻었어!\n\n" + game.print_board()
             
             await ChangeFinance(currency_type=CurrencyType.MONEY, amount=points, incremental=True)(client, message)
+            await game.prev_message.delete()
 
             state.games.pop((False, "FFLottery", message.author.id), None)
             return {**kwargs, "points": points, "content": content}
