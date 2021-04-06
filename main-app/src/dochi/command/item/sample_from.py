@@ -15,8 +15,8 @@ class SampleFrom(CommandItem, Generic[T]):
         client: discord.Client,
         message: discord.Message,
         *,
-        is_random: bool = False,
         choices: List[T],
+        is_random: bool = False,
         n: int = 1,
         **kwargs,
     ):
@@ -40,9 +40,8 @@ class SampleFrom(CommandItem, Generic[T]):
         prioritised_choices = []
 
         for choice in choices:
-            random.seed(hash(choice))
-            seed = random.random()
-            random.seed(seed + state.mood)
+            salt = "@@DOCHIDOCHI_BOTBOT@@"
+            random.seed(hash(choice) + salt + std(state.mood))
             priority = random.random()
             prioritised_choices.append((priority, choice))
 

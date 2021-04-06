@@ -25,14 +25,22 @@ class SendList(CommandItem):
             return
 
         members = [member async for member in guild.fetch_members(limit=None)]
-        m = hashlib.sha256()
-        m.update(query.encode())
-        query_hash = m.digest().hex() + str(state.mood)
+        names = set(
+            [member.nick for member in members if member.nick is not None]
+            + [member.name for member in members]
+        )
+        if query in names:
+            sample = [member for member in members if member.nick == query or member.name == query]
 
-        random.seed(query_hash)
-        np.random.seed(hash(query_hash) % 2**32)
-        n = 1 + max(1, min(8, math.floor(np.random.gamma(shape=2.5))))
-        sample = random.sample(members, n)
+        else:
+            m = hashlib.sha256()
+            m.update(query.encode())
+            query_hash = m.digest().hex() + str(state.mood)
+
+            random.seed(query_hash)
+            np.random.seed(hash(query_hash) % 2 ** 32)
+            n = 1 + max(1, min(8, math.floor(np.random.gamma(shape=2.5))))
+            sample = random.sample(members, n)
 
         for i in range(n):
             await message.channel.send(
@@ -40,11 +48,10 @@ class SendList(CommandItem):
                 + ". "
                 + (
                     f"{sample[i].nick} ({sample[i].name})"
-                    if sample[i].nick is not None
-                    and sample[i].nick != sample[i].name
+                    if sample[i].nick is not None and sample[i].nick != sample[i].name
                     else sample[i].name
                 )
             )
             await asyncio.sleep(0.5)
-        
+
         return kwargs
