@@ -104,10 +104,10 @@ class DochiBot(discord.Client):
                 ExactString("복권"),
                 StartFFLottery(),
                 NotifyFFLottery(),
+                DeleteMessage(),
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
-                DeleteMessage(),
             ),
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
@@ -121,10 +121,10 @@ class DochiBot(discord.Client):
                 MapArgs({"content": "move"}),
                 PlayFFLottery(),
                 NotifyFFLottery(),
+                DeleteMessage(),
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
-                DeleteMessage(),
             ),
         )
 
