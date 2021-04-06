@@ -78,6 +78,15 @@ class DochiBot(discord.Client):
             Send(),
         )
 
+        send_list_command = Command(
+            StartsWithDochi(),
+            MatchRegex(r"\s*(.*?)\s*목록$", 1),
+            MapArgs({"groups": "content"}),
+            StripWhitespaces(),
+            MapArgs({"content": "query"}),
+            SendList(),
+        )
+
         search_image_command = Command(
             StartsWithDochi(),
             MatchRegex(
@@ -123,26 +132,11 @@ class DochiBot(discord.Client):
         #     Command(
         #         StartsWithDochi(),
         #         OneOf(
-        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드$"),
-        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*카드\s*게임$"),
+        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
+        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*카드\s*게임\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
         #         ),
-        #         StartFFLottery(),
-        #         NotifyFFLottery(),
-        #         Args(reply=True),
-        #         Send(),
-        #     ),
-        #     Command(
-        #         OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
-        #         OneOf(MatchRegex(r"^복권\s+(.*?)$", 1), Filter(lambda c, m, k: True)),
-        #         MapArgs(
-        #             lambda l, m, k: {
-        #                 "content": k["groups" if "groups" in k else "content"].lower()
-        #             }
-        #         ),
-        #         MatchRegex(r"^[a-i]$"),
-        #         MapArgs({"content": "move"}),
-        #         PlayFFLottery(),
-        #         NotifyFFLottery(),
+        #         JoinFFTripleTriad(),
+        #         NotifyFFTripleTriad(),
         #         Args(reply=True),
         #         Send(),
         #     ),
@@ -218,6 +212,7 @@ class DochiBot(discord.Client):
             random_selection_commands,
             bori_command,
             show_likability_command,
+            send_list_command,
             pi_command,
             search_image_command,
             dotnick_command,

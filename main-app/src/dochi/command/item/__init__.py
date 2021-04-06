@@ -26,6 +26,7 @@ from .is_admin import IsAdmin
 
 # executor-like
 from .send import Send
+from .send_list import SendList
 from .shout import Shout
 from .wait import Wait
 from .mute import Mute
