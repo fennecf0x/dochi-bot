@@ -104,7 +104,6 @@ class DochiBot(discord.Client):
                 ExactString("복권"),
                 StartFFLottery(),
                 NotifyFFLottery(),
-                DeleteMessage(),
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
