@@ -1,12 +1,17 @@
 import discord
 from .item import CommandItem
+from .send import Send
 from ...state import state
 from ...games.ff_triple_triad import FFTripleTriad
 from .finance import ChangeFinance
 from ...database.types import CurrencyType
+import tossi
+import asyncio
+from typing import Tuple
+
 
 class JoinFFTripleTriad(CommandItem):
-    async def __call__( # type: ignore
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
@@ -16,67 +21,134 @@ class JoinFFTripleTriad(CommandItem):
         join FF triple triad
         """
 
-        if (False, "FFTripleTriad", message.author.id) not in state.games:
-            game = FFTripleTriad(client, message.author.id)
+        if (True, message.channel.id) not in state.games:
+            game = FFTripleTriad(client, message.channel.id, message.author.id)
             state.games[game.id] = game
+            return {
+                **kwargs,
+                "content": "트리플 트라이어드 게임이 만들어졌어! 참가하려면 '돛 파판 카드게임 할래'라고 말해줘.",
+                "notify": False,
+            }
+
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad":
+            return {**kwargs, "content": "이 방에선 다른 게임이 이미 진행 중이야.", "notify": True}
+
+        if not game.join(message.author.id):
+            return {**kwargs, "content": "이 방에선 다른 게임이 이미 진행 중이야.", "notify": True}
+
+        game.start()
+        member = message.guild.get_member(game.player_ids[0])
+
+        return {
+            **kwargs,
+            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 숫자랑 알파벳을 같이 써줘!",
+        }
 
 
-class NotifyFFLottery(CommandItem):
-    async def __call__( # type: ignore
+class NotifyFFTripleTriad(CommandItem):
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
         **kwargs,
     ):
         """
-        notify next move in FF lottery
+        send board in ff triple triad
         """
 
-        if (False, "FFLottery", message.author.id) not in state.games:
+        if (True, message.channel.id) not in state.games:
+            if "notify" in kwargs and kwargs["notify"]:
+                return kwargs
             return {**kwargs, "is_satisfied": False}
 
-        game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad":
+            if "notify" in kwargs and kwargs["notify"]:
+                return kwargs
+            return {**kwargs, "is_satisfied": False}
 
-        if game.stage < 3:
-            return {**kwargs, "content": "A부터 I까지 중에서 하나를 골라줘!\n\n" + game.print_board()}
+        if "notify" in kwargs and not kwargs["notify"]:
+            return kwargs
 
-        if game.stage == 3:
-            return {**kwargs, "content": "A부터 H까지 중에서 하나를 골라줘!\n\n" + game.print_board()}
+        if game.hand_messages[0] is not None:
+            await asyncio.gather(*[m.delete() for m in game.hand_messages])
 
-        if game.stage == 4:
-            points = game.get_points()
-            content = f"{points}원을 얻었어!\n\n" + game.print_board()
-            
-            await ChangeFinance(currency_type=CurrencyType.MONEY, amount=points, incremental=True)(client, message)
-            await game.prev_message.delete()
+        if game.get_winner() is not None:
+            winner = game.get_winner()
+            state.games.pop(game.id)
+            return {
+                **kwargs,
+                "content": f"""<@!{game.player_ids[winner]}>{
+                    tossi.pick(
+                        message.guild.get_member(game.player_ids[winner]).nick
+                        or message.guild.get_member(game.player_ids[winner]).name,
+                        '이',
+                    )
+                } 이겼어!"""
+                if winner in [0, 1]
+                else "비겼어!",
+                "winner": game.player_ids[winner] if winner in [0, 1] else None,
+                "loser": game.player_ids[winner] if winner in [0, 1] else None,
+                "svg": game.print_board(),
+            }
 
-            state.games.pop((False, "FFLottery", message.author.id), None)
-            return {**kwargs, "points": points, "content": content}
+        game.hand_messages = [
+            k["prev_message"]
+            for k in await asyncio.gather(
+                *[
+                    Send()(
+                        client,
+                        message,
+                        content=f"<@!{player_id}>의 덱",
+                        svg=game.print_hand(i),
+                        dm=message.guild.get_member(player_id),
+                    )
+                    for i, player_id in enumerate(game.player_ids)
+                ]
+            )
+        ]
+
+        curr_player = game.turn_index
+        member = message.guild.get_member(game.player_ids[curr_player])
+
+        return {
+            **kwargs,
+            "content": f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 숫자랑 알파벳을 같이 써줘!",
+            "svg": game.print_board(),
+        }
 
 
-class PlayFFLottery(CommandItem):
-    async def __call__( # type: ignore
+class PlayFFTripleTriad(CommandItem):
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
         *,
-        move: str,
+        move: Tuple[int, str],
         **kwargs,
     ):
         """
-        play a move in FF lottery
+        play a move in FF triple triad
         """
 
-        if (False, "FFLottery", message.author.id) not in state.games:
+        if (True, message.channel.id) not in state.games:
             return {**kwargs, "is_satisfied": False}
 
-        game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad" or game.is_finished:
+            return {**kwargs, "is_satisfied": False}
 
-        return {**kwargs, "is_satisfied": game.play(None, move)}
+        if message.author.id not in game.player_ids:
+            return {**kwargs, "is_satisfied": False}
+
+        index = game.player_ids.index(message.author.id)
+
+        return {**kwargs, "is_satisfied": game.play(index, move)}
 
 
-class StoreFFLotteryMessage(CommandItem):
-    async def __call__( # type: ignore
+class StoreFFTripleTriadMessage(CommandItem):
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
@@ -85,33 +157,39 @@ class StoreFFLotteryMessage(CommandItem):
         **kwargs,
     ):
         """
-        store sent message in FF lottery
+        store sent message in FF TripleTriad
         """
 
-        if (False, "FFLottery", message.author.id) not in state.games:
+        if (True, message.channel.id) not in state.games:
             return {**kwargs, "is_satisfied": False}
 
-        game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad" or game.is_finished:
+            return {**kwargs, "is_satisfied": False}
+
         game.prev_message = prev_message
 
         return kwargs
 
 
-class DeleteFFLotteryMessage(CommandItem):
-    async def __call__( # type: ignore
+class DeleteFFTripleTriadMessage(CommandItem):
+    async def __call__(  # type: ignore
         self,
         client: discord.Client,
         message: discord.Message,
         **kwargs,
     ):
         """
-        delete sent message in FF lottery
+        delete sent message in FF TripleTriad
         """
 
-        if (False, "FFLottery", message.author.id) not in state.games:
+        if (True, message.channel.id) not in state.games:
             return {**kwargs, "is_satisfied": False}
 
-        game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad" or game.is_finished:
+            return {**kwargs, "is_satisfied": False}
+
         if game.prev_message is not None:
             await game.prev_message.delete()
 

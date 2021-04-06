@@ -15,4 +15,10 @@ class DeleteMessage(CommandItem):
         delete the message from the user
         """
         
-        await message.delete()
+        try:
+            await message.delete()
+
+        except:
+            pass
+
+        return kwargs

@@ -23,7 +23,7 @@ class MultiPlayerGame(Game):
         assert max_num_players >= 2
         self.player_ids = [player_id]
         self.max_num_players = max_num_players
-        self.id = (True, self.__class__.__name__, channel_id)
+        self.id = (True, channel_id)
         self.is_playing = False
 
     def join(self, player_id: int) -> bool:
@@ -41,7 +41,12 @@ class MultiPlayerGame(Game):
             return False
 
         self.is_playing = True
+        self.on_start()
         return True
+
+    def on_start(self):
+        """on starting game"""
+        pass
 
     def leave(self, player_id: int) -> bool:
         if player_id in self.player_ids:

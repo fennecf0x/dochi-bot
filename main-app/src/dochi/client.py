@@ -110,7 +110,7 @@ class DochiBot(discord.Client):
             ),
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
-                OneOf(MatchRegex(r"^복권\s+(.*?)$", 1), Filter(lambda c, m, k: True)),
+                OneOf(MatchRegex(r"^복권\s*(.*?)$", 1), Filter(lambda c, m, k: True)),
                 MapArgs(
                     lambda l, m, k: {
                         "content": k["groups" if "groups" in k else "content"].lower()
@@ -127,19 +127,49 @@ class DochiBot(discord.Client):
             ),
         )
 
-        # ff_tt_commands = CommandGroup(
-        #     Command(
-        #         StartsWithDochi(),
-        #         OneOf(
-        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
-        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*카드\s*게임\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
-        #         ),
-        #         JoinFFTripleTriad(),
-        #         NotifyFFTripleTriad(),
-        #         Args(reply=True),
-        #         Send(),
-        #     ),
-        # )
+        ff_tt_commands = CommandGroup(
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                OneOf(
+                    MatchRegex(
+                        r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드\s*(시작|참가|참여|할래|ㄱㄱ?)?$"
+                    ),
+                    MatchRegex(r"^(파판|ff|FF|파이널판타지)\s*카드\s*게임\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
+                ),
+                JoinFFTripleTriad(),
+                NotifyFFTripleTriad(),
+                Send(),
+            ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                OneOf(
+                    MatchRegex(r"^(트리플\s*트라이어드|카드\s*게임)\s*(.*?)$", 2),
+                    Filter(lambda c, m, k: True),
+                ),
+                MapArgs(
+                    lambda l, m, k: {
+                        "content": k["groups" if "groups" in k else "content"].lower()
+                    }
+                ),
+                MatchRegex(
+                    r"^([1-5])[\s,\.]*([a-i])|([a-i])[\s,\.]*([1-5])$", 1, 2, 3, 4
+                ),
+                MapArgs(
+                    lambda c, m, k: {
+                        "move": (
+                            int(k["groups"][0] or k["groups"][3]),
+                            k["groups"][1] or k["groups"][2],
+                        )
+                    }
+                ),
+                PlayFFTripleTriad(),
+                NotifyFFTripleTriad(),
+                DeleteMessage(),
+                Send(),
+                DeleteFFTripleTriadMessage(),
+                StoreFFTripleTriadMessage(),
+            ),
+        )
 
         analyze_emotion_items = lambda starts_with_dochi: [
             Args(starts_with_dochi=starts_with_dochi),
@@ -191,19 +221,11 @@ class DochiBot(discord.Client):
             ),
         )
 
-        test_commands = CommandGroup(
-            finance_commands,
-            Command(
-                ExactString("svg"),
-                Args(svg="hihi"),
-                Send(),
-            ),
-            Command(
-                StartsWithDochi(),
-                MatchRegex(rf"(.*?)\s*읽어{줘}", 1),
-                MapArgs({"groups": "content"}),
-                Shout(),
-            ),
+        shout_command = Command(
+            StartsWithDochi(),
+            MatchRegex(rf"(.*?)\s*읽어{줘}", 1),
+            MapArgs({"groups": "content"}),
+            Shout(),
         )
 
         self.group: CommandGroup = CommandGroup(
@@ -215,8 +237,10 @@ class DochiBot(discord.Client):
             pi_command,
             search_image_command,
             dotnick_command,
+            shout_command,
+            finance_commands,
             ff_lottery_commands,
-            test_commands,
+            ff_tt_commands,
         )
 
     async def on_ready(self):

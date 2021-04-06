@@ -21,7 +21,7 @@ class Send(CommandItem):
         url: Optional[str] = None,
         svg: Optional[str] = None,
         reply: bool = False,
-        dm: bool = False,
+        dm: Optional[discord.Member] = None,
         mention_author: bool = False,
         **kwargs,
     ):
@@ -29,8 +29,8 @@ class Send(CommandItem):
         if url is None and svg is None:
             if reply:
                 prev_message = await message.reply(content, mention_author=mention_author)
-            elif dm:
-                prev_message = await message.author.send(content)
+            elif dm is not None:
+                prev_message = await dm.send(content)
             else:
                 prev_message = await message.channel.send(content)
 
@@ -48,10 +48,13 @@ class Send(CommandItem):
             buffer.seek(0)
             file_obj=discord.File(fp=buffer, filename="image.png")
 
+            if not dm:
+                print(file_obj)
+
             if reply:
                 prev_message = await message.reply(content=content, file=file_obj, mention_author=mention_author)
-            elif dm:
-                prev_message = await message.author.send(content=content, file=file_obj)
+            elif dm is not None:
+                prev_message = await dm.send(content=content, file=file_obj)
             else:
                 prev_message = await message.channel.send(content=content, file=file_obj)
 
@@ -64,8 +67,8 @@ class Send(CommandItem):
         if is_on_web and content == "":
             if reply:
                 prev_message = await message.reply(content=url, mention_author=mention_author)
-            elif dm:
-                prev_message = await message.author.send(content=url)
+            elif dm is not None:
+                prev_message = await dm.send(content=url)
             else:
                 prev_message = await message.channel.send(content=url)
 
@@ -77,8 +80,8 @@ class Send(CommandItem):
                     prev_message = await message.reply(
                         content=content, file=discord.File(url), mention_author=mention_author
                     )
-                elif dm:
-                    prev_message = await message.author.send(content=content, file=discord.File(url))
+                elif dm is not None:
+                    prev_message = await dm.send(content=content, file=discord.File(url))
                 else:
                     prev_message = await message.channel.send(content=content, file=discord.File(url))
             except Exception as e:
@@ -109,8 +112,8 @@ class Send(CommandItem):
         try:
             if reply:
                 prev_message = await message.reply(content=content, file=file, mention_author=mention_author)
-            elif dm:
-                prev_message = await message.author.send(content=content, file=file)
+            elif dm is not None:
+                prev_message = await dm.send(content=content, file=file)
             else:
                 prev_message = await message.channel.send(content=content, file=file)
         except Exception as e:
