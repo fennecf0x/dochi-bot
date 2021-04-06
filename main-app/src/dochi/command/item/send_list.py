@@ -29,10 +29,12 @@ class SendList(CommandItem):
             [member.nick for member in members if member.nick is not None]
             + [member.name for member in members]
         )
+        sample = []
         if query in names:
             sample = [member for member in members if member.nick == query or member.name == query]
+            n = len(sample)
 
-        else:
+        if sample == []:
             m = hashlib.sha256()
             m.update(query.encode())
             query_hash = m.digest().hex() + str(state.mood)
