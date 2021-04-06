@@ -38,14 +38,14 @@ class NotifyFFLottery(CommandItem):
         game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
 
         if game.stage < 3:
-            return {**kwargs, "content": "A부터 I까지 중에서 하나를 골라줘!\n\n" + game.print_board()}
+            return {**kwargs, "content": f"<@!{message.author.id}>: A부터 I까지 중에서 하나를 골라줘!\n\n" + game.print_board()}
 
         if game.stage == 3:
-            return {**kwargs, "content": "A부터 H까지 중에서 하나를 골라줘!\n\n" + game.print_board()}
+            return {**kwargs, "content": f"<@!{message.author.id}>: A부터 H까지 중에서 하나를 골라줘!\n\n" + game.print_board()}
 
         if game.stage == 4:
             points = game.get_points()
-            content = f"{points}원을 얻었어!\n\n" + game.print_board()
+            content = f"<@!{message.author.id}>: {points}원을 얻었어!\n\n" + game.print_board()
             
             await ChangeFinance(currency_type=CurrencyType.MONEY, amount=points, incremental=True)(client, message)
             await game.prev_message.delete()

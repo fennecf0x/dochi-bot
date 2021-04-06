@@ -104,7 +104,6 @@ class DochiBot(discord.Client):
                 ExactString("복권"),
                 StartFFLottery(),
                 NotifyFFLottery(),
-                Args(reply=True),
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
@@ -122,7 +121,6 @@ class DochiBot(discord.Client):
                 MapArgs({"content": "move"}),
                 PlayFFLottery(),
                 NotifyFFLottery(),
-                Args(reply=True),
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
@@ -130,19 +128,19 @@ class DochiBot(discord.Client):
             ),
         )
 
-        # ff_tt_commands = CommandGroup(
-        #     Command(
-        #         StartsWithDochi(),
-        #         OneOf(
-        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
-        #             MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*카드\s*게임\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
-        #         ),
-        #         JoinFFTripleTriad(),
-        #         NotifyFFTripleTriad(),
-        #         Args(reply=True),
-        #         Send(),
-        #     ),
-        # )
+        ff_tt_commands = CommandGroup(
+            Command(
+                StartsWithDochi(),
+                OneOf(
+                    MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
+                    MatchRegex(r"^(파판|ff|FF|파이널판타지)?\s*카드\s*게임\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
+                ),
+                JoinFFTripleTriad(),
+                NotifyFFTripleTriad(),
+                Args(reply=True),
+                Send(),
+            ),
+        )
 
         analyze_emotion_items = lambda starts_with_dochi: [
             Args(starts_with_dochi=starts_with_dochi),
