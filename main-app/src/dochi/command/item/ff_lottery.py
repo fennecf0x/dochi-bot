@@ -16,12 +16,9 @@ class StartFFLottery(CommandItem):
         start FF lottery
         """
 
-        if (False, "FFLottery", message.author.id) in state.games:
-            return {**kwargs, "is_satisfied": False}
-
-        game = FFLottery(client, message.author.id)
-
-        state.games[game.id] = game
+        if (False, "FFLottery", message.author.id) not in state.games:
+            game = FFLottery(client, message.author.id)
+            state.games[game.id] = game
 
 
 class NotifyFFLottery(CommandItem):
@@ -75,3 +72,46 @@ class PlayFFLottery(CommandItem):
         game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
 
         return {**kwargs, "is_satisfied": game.play(None, move)}
+
+
+class StoreFFLotteryMessage(CommandItem):
+    async def __call__( # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        *,
+        prev_message: discord.Message,
+        **kwargs,
+    ):
+        """
+        store sent message in FF lottery
+        """
+
+        if (False, "FFLottery", message.author.id) not in state.games:
+            return {**kwargs, "is_satisfied": False}
+
+        game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
+        game.prev_message = prev_message
+
+        return kwargs
+
+
+class DeleteFFLotteryMessage(CommandItem):
+    async def __call__( # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        **kwargs,
+    ):
+        """
+        delete sent message in FF lottery
+        """
+
+        if (False, "FFLottery", message.author.id) not in state.games:
+            return {**kwargs, "is_satisfied": False}
+
+        game: FFLottery = state.games[(False, "FFLottery", message.author.id)]
+        if game.prev_message is not None:
+            await game.prev_message.delete()
+
+        return kwargs

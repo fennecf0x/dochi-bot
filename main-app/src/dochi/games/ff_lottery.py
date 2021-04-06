@@ -19,6 +19,8 @@ class FFLottery(SinglePlayerGame):
         self.stage: int = 0  # select spot at 0, 1, 2
         # select line at 3, show result at 4
 
+        self.prev_message: Optional[discord.Message] = None
+
     def play(
         self, player: int, move: Literal["a", "b", "c", "d", "e", "f", "g", "h", "i"]
     ) -> bool:

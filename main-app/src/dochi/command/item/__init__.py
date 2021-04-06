@@ -31,4 +31,4 @@ from .wait import Wait
 from .mute import Mute
 from .change_nickname import ChangeNickname
 from .analyze_emotion import AnalyzeEmotion
-from .ff_lottery import StartFFLottery, PlayFFLottery, NotifyFFLottery
+from .ff_lottery import StartFFLottery, PlayFFLottery, NotifyFFLottery, StoreFFLotteryMessage, DeleteFFLotteryMessage
