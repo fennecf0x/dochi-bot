@@ -52,4 +52,5 @@ from .ff_triple_triad import (
     PlayFFTripleTriad,
     StoreFFTripleTriadMessage,
     DeleteFFTripleTriadMessage,
+    ProcessOptionsFFTripleTriad,
 )

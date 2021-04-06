@@ -30,8 +30,14 @@ class FFTripleTriad(MultiPlayerGame):
     def __init__(self, client: discord.Client, channel_id: int, player_id: int):
         super().__init__(client, channel_id, player_id, 2)
         self.prev_message: Optional[discord.Message] = None
-        self.hand_messages: Tuple[Optional[discord.Message]] = (None, None)
+        self.hand_messages: List[Optional[discord.Message]] = [None, None]
         self.board: List[Optional[Tuple[str, int]]] = [None] * 9
+        self.options = {
+            "동수": False,
+            "합산": False,
+            "순서대로": False,
+            "무작위순서": False,
+        }
 
     @staticmethod
     def tile_to_str(tile: Tuple[str, int]):
@@ -50,7 +56,7 @@ class FFTripleTriad(MultiPlayerGame):
         random.shuffle(self.player_ids)
         random.seed(datetime.now())
         self.hands = [random.sample(cards, 5), random.sample(cards, 5)]
-        self.hand_messages = (None, None)
+        self.hand_messages = [None, None]
         self.prev_message = None
 
     def get_winner(self) -> Optional[int]:  # -1: draw
@@ -68,6 +74,13 @@ class FFTripleTriad(MultiPlayerGame):
         if self.turn_index != player:
             return False
 
+        if self.options["순서대로"]:
+            move = (len([hand for hand in self.hands[player] if hand is None]), move[1])
+
+        if self.options["무작위순서"]:
+            hand_indices = [i for (i, hand) in enumerate(self.hands[player]) if hand is not None]
+            move = (random.choice(hand_indices), move[1])
+
         card_name = self.hands[player][move[0] - 1]
         if card_name is None:
             return False
@@ -83,18 +96,19 @@ class FFTripleTriad(MultiPlayerGame):
         self.board[board_index] = (card_name, player)
 
         # check for "SAME"
-        affected_cards = self.check_same(board_index)
-        if len(affected_cards) >= 2:
+        if self.options["동수"]:
+            affected_cards = self.check_same(board_index)
+            if len(affected_cards) >= 2:
+                changed_card_positions.extend(
+                    [pos for pos in affected_cards if self.board[pos][1] != player]
+                )
+
+        # check for "PLUS"
+        if self.options["합산"]:
+            affected_cards = self.check_plus(board_index)
             changed_card_positions.extend(
                 [pos for pos in affected_cards if self.board[pos][1] != player]
             )
-
-        # TODO:
-        # check for "PLUS"
-        affected_cards = self.check_plus(board_index)
-        changed_card_positions.extend(
-            [pos for pos in affected_cards if self.board[pos][1] != player]
-        )
 
         if len(changed_card_positions) < 2:
             # normal
@@ -103,7 +117,6 @@ class FFTripleTriad(MultiPlayerGame):
 
         else:
             # combo
-
             for pos in changed_card_positions:
                 if pos != board_index:
                     self.board[pos] = (self.board[pos][0], player)
@@ -341,8 +354,8 @@ class FFTripleTriad(MultiPlayerGame):
         )
         gen_text = lambda i: (
             f"""
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK JP;font-weight:600;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1;stroke:#4d4d4d;stroke-width:12px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},64)">{i + 1}</text>
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK JP;font-weight:600;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},64)">{i + 1}</text>
+            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1;stroke:#4d4d4d;stroke-width:12px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},64)">{i + 1}</text>
+            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},64)">{i + 1}</text>
             """
         )
         return f"""
@@ -365,7 +378,7 @@ class FFTripleTriad(MultiPlayerGame):
         )
         gen_text = (
             lambda i: f"""
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK JP;font-weight:600;font-size:72px;font-style:normal;fill:#373737;stroke:none;' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{268 * (i % 3) + 140},{268 * (i // 3) + 166})">{chr(65 + i)}</text>
+            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:72px;font-style:normal;fill:#373737;stroke:none;' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{268 * (i % 3) + 140},{268 * (i // 3) + 166})">{chr(65 + i)}</text>
             """
         )
         return f"""

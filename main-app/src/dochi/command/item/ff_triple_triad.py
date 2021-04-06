@@ -6,8 +6,9 @@ from ...games.ff_triple_triad import FFTripleTriad
 from .finance import ChangeFinance
 from ...database.types import CurrencyType
 import tossi
+import re
 import asyncio
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 class JoinFFTripleTriad(CommandItem):
@@ -26,7 +27,7 @@ class JoinFFTripleTriad(CommandItem):
             state.games[game.id] = game
             return {
                 **kwargs,
-                "content": "트리플 트라이어드 게임이 만들어졌어! 참가하려면 '돛 파판 카드게임 할래'라고 말해줘.",
+                "content": "트리플 트라이어드 게임이 만들어졌어!\n참가하려면 '돛 트트 할래'라고 말하면 되고, 옵션을 바꾸려면 '돛 트트 (옵션 이름)ㅇ (옵션 이름)ㄴ'으로 알려주면 돼.\n\n가능한 옵션: 동수, 합산, 순서대로, 무작위순서",
                 "notify": False,
             }
 
@@ -42,7 +43,7 @@ class JoinFFTripleTriad(CommandItem):
 
         return {
             **kwargs,
-            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 숫자랑 알파벳을 같이 써줘!",
+            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['무작위순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
         }
 
 
@@ -93,28 +94,29 @@ class NotifyFFTripleTriad(CommandItem):
                 "svg": game.print_board(),
             }
 
-        game.hand_messages = [
-            k["prev_message"]
-            for k in await asyncio.gather(
-                *[
-                    Send()(
-                        client,
-                        message,
-                        content=f"<@!{player_id}>의 덱",
-                        svg=game.print_hand(i),
-                        dm=message.guild.get_member(player_id),
-                    )
-                    for i, player_id in enumerate(game.player_ids)
-                ]
-            )
-        ]
+        if game.hand_messages[game.turn_index] is None:
+            game.hand_messages[game.turn_index] = (await Send()(
+                client,
+                message,
+                content=f"<@!{game.player_ids[game.turn_index]}>의 덱",
+                svg=game.print_hand(game.turn_index),
+                dm=message.guild.get_member(game.player_ids[game.turn_index]),
+            ))["prev_message"]
+
+        game.hand_messages[1 - game.turn_index] = (await Send()(
+            client,
+            message,
+            content=f"<@!{game.player_ids[1 - game.turn_index]}>의 덱",
+            svg=game.print_hand(1 - game.turn_index),
+            dm=message.guild.get_member(game.player_ids[1 - game.turn_index]),
+        ))["prev_message"]
 
         curr_player = game.turn_index
         member = message.guild.get_member(game.player_ids[curr_player])
 
         return {
             **kwargs,
-            "content": f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 숫자랑 알파벳을 같이 써줘!",
+            "content": f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['무작위순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
             "svg": game.print_board(),
         }
 
@@ -125,7 +127,7 @@ class PlayFFTripleTriad(CommandItem):
         client: discord.Client,
         message: discord.Message,
         *,
-        move: Tuple[int, str],
+        move: Tuple[Optional[int], str],
         **kwargs,
     ):
         """
@@ -140,6 +142,9 @@ class PlayFFTripleTriad(CommandItem):
             return {**kwargs, "is_satisfied": False}
 
         if message.author.id not in game.player_ids:
+            return {**kwargs, "is_satisfied": False}
+
+        if (game.options["순서대로"] or game.options["무작위순서"]) != (move[0] is None):
             return {**kwargs, "is_satisfied": False}
 
         index = game.player_ids.index(message.author.id)
@@ -194,3 +199,53 @@ class DeleteFFTripleTriadMessage(CommandItem):
             await game.prev_message.delete()
 
         return kwargs
+
+
+class ProcessOptionsFFTripleTriad(CommandItem):
+    async def __call__(  # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        *,
+        content: str,
+        **kwargs,
+    ):
+        """
+        parse game options in FF TripleTriad
+        """
+
+        if (True, message.channel.id) not in state.games:
+            return {**kwargs, "is_satisfied": False}
+
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad" or not game.is_finished:
+            return {**kwargs, "is_satisfied": False}
+
+        if message.author.id not in game.player_ids:
+            return {**kwargs, "is_satisfied": False}
+
+        pattern = r"(동수|합산|순서대로|무작위순서)(ㅇ|ㄴ)?(,|\.)?"
+        matches = [
+            (option_name, yn_str != "ㄴ")
+            for (option_name, yn_str, _) in re.compile(pattern).findall(content)
+        ]
+
+        if re.match(r"^((동수|합산|순서대로|무작위순서)(ㅇ|ㄴ)?(,|\.)?)+", content) is None:
+            return {**kwargs, "is_satisfied": False}
+
+        if ("순서대로", True) in matches and ("무작위순서", True) in matches:
+            return {**kwargs, "is_satisfied": False}
+
+        if ("순서대로", True) in matches:
+            matches.append(("무작위순서", False))
+
+        if ("무작위순서", True) in matches:
+            matches.append(("순서대로", False))
+
+        for (option_name, option_value) in matches:
+            game.options[option_name] = option_value
+
+        return {
+            **kwargs,
+            "content": f"현재 옵션: {', '.join(f'**{key}**' if game.options[key] else f'~~{key}~~' for key in game.options.keys())}",
+        }

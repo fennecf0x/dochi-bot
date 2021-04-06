@@ -48,9 +48,6 @@ class Send(CommandItem):
             buffer.seek(0)
             file_obj=discord.File(fp=buffer, filename="image.png")
 
-            if not dm:
-                print(file_obj)
-
             if reply:
                 prev_message = await message.reply(content=content, file=file_obj, mention_author=mention_author)
             elif dm is not None:

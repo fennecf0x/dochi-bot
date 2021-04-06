@@ -130,11 +130,8 @@ class DochiBot(discord.Client):
         ff_tt_commands = CommandGroup(
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
-                OneOf(
-                    MatchRegex(
-                        r"^(파판|ff|FF|파이널판타지)?\s*트리플\s*트라이어드\s*(시작|참가|참여|할래|ㄱㄱ?)?$"
-                    ),
-                    MatchRegex(r"^(파판|ff|FF|파이널판타지)\s*카드\s*게임\s*(시작|참가|참여|할래|ㄱㄱ?)?$"),
+                MatchRegex(
+                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(시작|참가|참여|할래|ㄱㄱ?)?$"
                 ),
                 JoinFFTripleTriad(),
                 NotifyFFTripleTriad(),
@@ -142,8 +139,20 @@ class DochiBot(discord.Client):
             ),
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                MatchRegex(
+                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(옵션|설정)?\s*(.*?)$", 4
+                ),
+                MapArgs({"groups": "content"}),
+                StripWhitespaces(),
+                ProcessOptionsFFTripleTriad(),
+                Send(),
+            ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 OneOf(
-                    MatchRegex(r"^(트리플\s*트라이어드|카드\s*게임)\s*(.*?)$", 2),
+                    MatchRegex(
+                        r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(.*?)$", 3
+                    ),
                     Filter(lambda c, m, k: True),
                 ),
                 MapArgs(
@@ -152,12 +161,14 @@ class DochiBot(discord.Client):
                     }
                 ),
                 MatchRegex(
-                    r"^([1-5])[\s,\.]*([a-i])|([a-i])[\s,\.]*([1-5])$", 1, 2, 3, 4
+                    r"^([1-5])?[\s,\.]*([a-i])|([a-i])[\s,\.]*([1-5])?$", 1, 2, 3, 4
                 ),
                 MapArgs(
                     lambda c, m, k: {
                         "move": (
-                            int(k["groups"][0] or k["groups"][3]),
+                            int(k["groups"][0] or k["groups"][3])
+                            if (k["groups"][0] or k["groups"][3]) is not None
+                            else None,
                             k["groups"][1] or k["groups"][2],
                         )
                     }
