@@ -349,7 +349,7 @@ class FFTripleTriad(MultiPlayerGame):
         hand = self.hands[index]
         gen_path = (
             lambda i: f"""
-            <path d="M 28 12 L 252 12 C 260.831 12 268 19.169 268 28 L 268 252 C 268 260.831 260.831 268 252 268 L 28 268 C 19.169 268 12 260.831 12 252 L 12 28 C 12 19.169 19.169 12 28 12 Z" transform="matrix(1,0,0,1,{268 * i},84)" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />
+            <path d="M 28 12 L 252 12 C 260.831 12 268 19.169 268 28 L 268 252 C 268 260.831 260.831 268 252 268 L 28 268 C 19.169 268 12 260.831 12 252 L 12 28 C 12 19.169 19.169 12 28 12 Z" transform="matrix(1,0,0,1,{268 * i},72)" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />
             """
         )
         gen_text = lambda i: (
