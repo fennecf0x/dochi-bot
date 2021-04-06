@@ -17,7 +17,7 @@ class JoinFFTripleTriad(CommandItem):
         """
 
         if (False, "FFTripleTriad", message.author.id) not in state.games:
-            game = FFLottery(client, message.author.id)
+            game = FFTripleTriad(client, message.author.id)
             state.games[game.id] = game
 
 
