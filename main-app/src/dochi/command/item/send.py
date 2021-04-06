@@ -5,6 +5,10 @@ from urllib.parse import unquote, urlparse
 from pathlib import PurePosixPath
 import aiohttp
 from io import BytesIO
+import gi
+gi.require_version('Rsvg', '2.0')
+from gi.repository import Rsvg
+import cairo
 
 
 class Send(CommandItem):
@@ -15,18 +19,38 @@ class Send(CommandItem):
         *,
         content: str,
         url: Optional[str] = None,
+        svg: Optional[str] = None,
         reply: bool = False,
         mention_author: bool = False,
         **kwargs,
     ):
         # text only
-        if url is None:
+        if url is None and svg is None:
             if reply:
                 prev_message = await message.reply(content, mention_author=mention_author)
             else:
                 prev_message = await message.channel.send(content)
 
-            return {**kwargs, "message": prev_message}
+            return {**kwargs, "prev_message": prev_message}
+
+        # svg (with text)
+        if url is None:
+            handle = Rsvg.Handle.new_from_data(svg.encode("utf-8"))
+            svg_img = cairo.ImageSurface(cairo.FORMAT_ARGB32, handle.props.width, handle.props.height)
+            ctx = cairo.Context(svg_img)
+            handle.render_cairo(ctx)
+
+            buffer = BytesIO()
+            svg_img.write_to_png(buffer)
+            buffer.seek(0)
+            file_obj=discord.File(fp=buffer, filename="image.png")
+
+            if reply:
+                prev_message = await message.reply(content=content, file=file_obj, mention_author=mention_author)
+            else:
+                prev_message = await message.channel.send(content=content, file=file_obj)
+
+            return {**kwargs, "prev_message": prev_message}
 
         is_on_web = url.startswith("http://") or url.startswith("https://")
 
@@ -38,7 +62,7 @@ class Send(CommandItem):
             else:
                 prev_message = await message.channel.send(content=url)
 
-            return {**kwargs, "message": prev_message}
+            return {**kwargs, "prev_message": prev_message}
 
         if not is_on_web:
             try:
@@ -54,7 +78,7 @@ class Send(CommandItem):
                 print("send file failed", e)
                 pass
 
-            return {**kwargs, "message": prev_message}
+            return {**kwargs, "prev_message": prev_message}
 
         # from now on, `url` is on the web and `content` is nonempty
         # fetch the file from `url`
@@ -84,4 +108,4 @@ class Send(CommandItem):
             print("send file failed", e)
             pass
 
-        return {**kwargs, "message": prev_message}
+        return {**kwargs, "prev_message": prev_message}
