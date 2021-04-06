@@ -23,6 +23,12 @@ class SendList(CommandItem):
         guild: Optional[discord.Guild] = message.guild
         if guild is None:
             return
+        
+        m = hashlib.sha256()
+        m.update(query.encode())
+        query_hash = m.digest().hex() + str(state.mood)
+
+        random.seed(query_hash)
 
         members = [member async for member in guild.fetch_members(limit=None)]
         names = set(
@@ -32,13 +38,11 @@ class SendList(CommandItem):
         sample = []
         if query in names:
             sample = [member for member in members if member.nick == query or member.name == query]
+            random.seed(query_hash)
+            random.shuffle(sample)
             n = len(sample)
 
         if sample == []:
-            m = hashlib.sha256()
-            m.update(query.encode())
-            query_hash = m.digest().hex() + str(state.mood)
-
             random.seed(query_hash)
             np.random.seed(hash(query_hash) % 2 ** 32)
             n = 1 + max(1, min(8, math.floor(np.random.gamma(shape=2.5))))
