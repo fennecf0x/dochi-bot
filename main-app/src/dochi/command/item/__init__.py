@@ -26,6 +26,7 @@ from .is_admin import IsAdmin
 
 # executor-like
 from .send import Send
+from .delete_message import DeleteMessage
 from .send_list import SendList
 from .shout import Shout
 from .wait import Wait
@@ -33,3 +34,4 @@ from .mute import Mute
 from .change_nickname import ChangeNickname
 from .analyze_emotion import AnalyzeEmotion
 from .ff_lottery import StartFFLottery, PlayFFLottery, NotifyFFLottery, StoreFFLotteryMessage, DeleteFFLotteryMessage
+from .ff_triple_triad import JoinFFTripleTriad

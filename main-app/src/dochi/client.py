@@ -108,6 +108,7 @@ class DochiBot(discord.Client):
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
+                DeleteMessage(),
             ),
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
@@ -125,6 +126,7 @@ class DochiBot(discord.Client):
                 Send(),
                 DeleteFFLotteryMessage(),
                 StoreFFLotteryMessage(),
+                DeleteMessage(),
             ),
         )
 
