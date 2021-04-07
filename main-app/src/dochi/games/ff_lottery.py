@@ -189,7 +189,7 @@ class FFLottery(SinglePlayerGame):
                         " ".join(
                             [
                                 f":black_small_square: {self.line_to_emoji_hidden(chr(99 - row))}",
-                                *[self.num_to_emoji(3 * row + col) for col in range(3)],
+                                *[self.num_to_emoji(self.board[3 * row + col]) for col in range(3)],
                                 ":black_small_square: :black_small_square:",
                             ]
                         )
