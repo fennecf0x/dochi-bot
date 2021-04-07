@@ -203,7 +203,7 @@ class DochiBot(discord.Client):
                 StorePenguinPartyMessage(),
             ),
             Command(
-                StartsWithDochi(),
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(나갈래|퇴장)$"),
                 ExitPenguinParty(),
                 Send(),
