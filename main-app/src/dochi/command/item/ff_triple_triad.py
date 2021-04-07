@@ -72,7 +72,7 @@ class NotifyFFTripleTriad(CommandItem):
         if "notify" in kwargs and not kwargs["notify"]:
             return kwargs
 
-        if game.hand_messages[0] is not None:
+        if game.hand_messages[1 - game.turn_index] is not None:
             await asyncio.gather(*[m.delete() for m in game.hand_messages])
 
         if game.get_winner() is not None:
@@ -248,4 +248,34 @@ class ProcessOptionsFFTripleTriad(CommandItem):
         return {
             **kwargs,
             "content": f"현재 옵션: {', '.join(f'**{key}**' if game.options[key] else f'~~{key}~~' for key in game.options.keys())}",
+        }
+
+
+class TerminateFFTripleTriad(CommandItem):
+    async def __call__(  # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        **kwargs,
+    ):
+        """
+        Terminate FF triple triad
+        """
+
+        if (True, message.channel.id) not in state.games:
+            return {**kwargs, "is_satisfied": False}
+
+        game: FFTripleTriad = state.games[(True, message.channel.id)]
+        if game.__class__.__name__ != "FFTripleTriad":
+            return {**kwargs, "is_satisfied": False}
+
+        if message.author.id not in game.player_ids:
+            return {**kwargs, "is_satisfied": False}
+
+        game.terminate()
+        state.games.pop(game.id)
+
+        return {
+            **kwargs,
+            "content": f"게임이 터졌어!",
         }

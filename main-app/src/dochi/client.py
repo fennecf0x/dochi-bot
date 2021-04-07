@@ -140,6 +140,14 @@ class DochiBot(discord.Client):
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 MatchRegex(
+                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(종료|취소|(안|그만)\s*할래)$"
+                ),
+                TerminateFFTripleTriad(),
+                Send(),
+            ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                MatchRegex(
                     r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(옵션|설정)?\s*(.*?)$", 4
                 ),
                 MapArgs({"groups": "content"}),
