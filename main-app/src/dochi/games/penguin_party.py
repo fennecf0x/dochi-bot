@@ -76,7 +76,7 @@ class PenguinParty(MultiPlayerGame):
             player_index = self.turn_index
 
         poses = self.available_poses()
-        colors = set(self.hands[self.turn_index])
+        colors = set(self.hands[player_index])
         print("colors", list(colors))
 
         result = []
