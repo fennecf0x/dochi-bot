@@ -24,7 +24,8 @@ class MultiPlayerGame(Game):
         self.player_ids = [player_id]
         self.max_num_players = max_num_players
         self.id = (True, channel_id)
-        self.is_playing = False
+        self._is_finished = False
+        self.has_started = False
 
     def join(self, player_id: int) -> bool:
         if player_id in self.player_ids:
@@ -37,10 +38,10 @@ class MultiPlayerGame(Game):
         return True
 
     def start(self) -> bool:
-        if self.is_playing:
+        if self.has_started:
             return False
 
-        self.is_playing = True
+        self.has_started = True
         self.on_start()
         return True
 
@@ -56,8 +57,8 @@ class MultiPlayerGame(Game):
         return False
 
     def terminate(self) -> bool:
-        if self.is_playing:
-            self.is_playing = False
+        if self._is_finished:
+            self._is_finished = True
             return True
 
         return False
@@ -65,13 +66,14 @@ class MultiPlayerGame(Game):
     @property
     def is_finished(self) -> bool:
         # when it is finished, it should be removed
-        return not self.is_playing
+        return self._is_finished
 
 
 class SinglePlayerGame(Game):
     def __init__(self, client: discord.Client, user_id: int):
         self.id = (False, self.__class__.__name__, user_id)
 
+    @property
     def is_finished(self) -> bool:
         # when it is finished, it should be removed
         return False
