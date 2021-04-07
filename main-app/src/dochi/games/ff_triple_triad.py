@@ -92,7 +92,7 @@ class FFTripleTriad(MultiPlayerGame):
             return False
 
         if self.options["순서대로"] or self.options["무작위순서"]:
-            move = (len([hand for hand in self.hands[player] if hand is None]), move[1])
+            move = (5 - len([hand for hand in self.hands[player] if hand is None]), move[1])
 
         card_name = self.hands[player][move[0] - 1]
         if card_name is None:
