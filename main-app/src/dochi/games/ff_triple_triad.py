@@ -52,10 +52,14 @@ class FFTripleTriad(MultiPlayerGame):
 
         cards = FFTripleTriad.CARDS.keys()
 
-        # TODO: currently hands are determined randomly
-        random.shuffle(self.player_ids)
         random.seed(datetime.now())
+        random.shuffle(self.player_ids)
+
+        # TODO: currently hands are determined randomly
         self.hands = [random.sample(cards, 5), random.sample(cards, 5)]
+        if self.options["무작위순서"]:
+            random.shuffle(self.hands)
+
         self.hand_messages = [None, None]
         self.prev_message = None
 
@@ -74,12 +78,8 @@ class FFTripleTriad(MultiPlayerGame):
         if self.turn_index != player:
             return False
 
-        if self.options["순서대로"]:
+        if self.options["순서대로"] or self.options["무작위순서"]:
             move = (len([hand for hand in self.hands[player] if hand is None]), move[1])
-
-        if self.options["무작위순서"]:
-            hand_indices = [i for (i, hand) in enumerate(self.hands[player]) if hand is not None]
-            move = (random.choice(hand_indices), move[1])
 
         card_name = self.hands[player][move[0] - 1]
         if card_name is None:

@@ -164,12 +164,7 @@ class FFLottery(SinglePlayerGame):
                         " ".join(
                             [
                                 f":regional_indicator_{chr(99 - row)}: :arrow_right:",
-                                *[
-                                    self.num_to_emoji_hidden(
-                                        3 * row + col, ":yellow_square:"
-                                    )
-                                    for col in range(3)
-                                ],
+                                *[self.num_to_emoji(3 * row + col) for col in range(3)],
                                 ":black_small_square: :black_small_square:",
                             ]
                         )
