@@ -129,7 +129,7 @@ class DochiBot(discord.Client):
 
         ff_tt_commands = CommandGroup(
             Command(
-                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StartsWithDochi(),
                 MatchRegex(
                     r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(시작|참가|참여|할래|ㄱㄱ?)?$"
                 ),
@@ -139,17 +139,18 @@ class DochiBot(discord.Client):
                 StoreFFTripleTriadMessage(),
             ),
             Command(
-                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StartsWithDochi(),
                 MatchRegex(
-                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(종료|취소|(안|그만)\s*할래)$"
+                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*((종료|취소)(할래)?|(안|그만)\s*할래)$"
                 ),
                 TerminateFFTripleTriad(),
                 Send(),
             ),
             Command(
-                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StartsWithDochi(),
                 MatchRegex(
-                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(옵션|설정)?\s*(.*?)$", 4
+                    r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(옵션|설정)?\s*(.*?)$",
+                    4,
                 ),
                 MapArgs({"groups": "content"}),
                 StripWhitespaces(),
@@ -157,7 +158,7 @@ class DochiBot(discord.Client):
                 Send(),
             ),
             Command(
-                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StartsWithDochi(),
                 OneOf(
                     MatchRegex(
                         r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(.*?)$", 3
@@ -188,6 +189,91 @@ class DochiBot(discord.Client):
                 Send(),
                 DeleteFFTripleTriadMessage(),
                 StoreFFTripleTriadMessage(),
+            ),
+        )
+
+        penguin_party_commands = CommandGroup(
+            Command(
+                StartsWithDochi(),
+                MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(참가|참여|할래|시작|ㄱㄱ?)?$"),
+                StartPenguinParty(),
+                NotifyPenguinParty(),
+                JoinPenguinParty(),
+                Send(),
+                StorePenguinPartyMessage(),
+            ),
+            Command(
+                StartsWithDochi(),
+                MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(나갈래|퇴장)?$"),
+                ExitPenguinParty(),
+                Send(),
+            ),
+            Command(
+                StartsWithDochi(),
+                MatchRegex(
+                    r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*((종료|취소)(할래)?|(안|그만)\s*할래)$"
+                ),
+                TerminatePenguinParty(),
+                Send(),
+            ),
+            # Command(
+            #     OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+            #     MatchRegex(
+            #         r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(옵션|설정)?\s*(.*?)$", 4
+            #     ),
+            #     MapArgs({"groups": "content"}),
+            #     StripWhitespaces(),
+            #     ProcessOptionsFFTripleTriad(),
+            #     Send(),
+            # ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                OneOf(
+                    MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(.*?)$", 2),
+                    Filter(lambda c, m, k: True),
+                ),
+                MapArgs(
+                    lambda l, m, k: {
+                        "content": k["groups" if "groups" in k else "content"].lower()
+                    }
+                ),
+                MatchRegex(
+                    r"^((r|빨강?)|(y|노랑?)|(g|초록?)|(b|파랑?)|(p|보라?))[\s,\.]*([1-8])$|^([1-8])[\s,\.]*((r|빨강?)|(y|노랑?)|(g|초록?)|(b|파랑?)|(p|보라?))$",
+                    2,  # 0: r
+                    3,  # 1: y
+                    4,  # 2: g
+                    5,  # 3: b
+                    6,  # 4: p
+                    7,  # 5: num
+                    8,  # 6: num
+                    10,  # 7: r
+                    11,  # 8: y
+                    12,  # 9: g
+                    13,  # 10: b
+                    14,  # 11: p
+                ),
+                MapArgs(
+                    lambda c, m, k: {
+                        "move": (
+                            1
+                            if k["groups"][0] or k["groups"][7] is not None
+                            else 2
+                            if k["groups"][1] or k["groups"][8] is not None
+                            else 3
+                            if k["groups"][2] or k["groups"][9] is not None
+                            else 4
+                            if k["groups"][3] or k["groups"][10] is not None
+                            else 5,
+                            int(k["groups"][5] or k["groups"][6]) - 1,
+                        )
+                    }
+                ),
+                PlayPenguinParty(),
+                NotifyPenguinParty(),
+                DeleteMessage(),
+                Send(),
+                DeletePenguinPartyMessage(),
+                StorePenguinPartyMessage(),
             ),
         )
 
@@ -261,6 +347,7 @@ class DochiBot(discord.Client):
             finance_commands,
             ff_lottery_commands,
             ff_tt_commands,
+            penguin_party_commands,
         )
 
     async def on_ready(self):

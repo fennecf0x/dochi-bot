@@ -55,3 +55,4 @@ from .ff_triple_triad import (
     ProcessOptionsFFTripleTriad,
     TerminateFFTripleTriad,
 )
+from .penguin_party import *
