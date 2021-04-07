@@ -77,6 +77,7 @@ class PenguinParty(MultiPlayerGame):
 
         poses = self.available_poses()
         colors = set(self.hands[self.turn_index])
+        print("colors", list(colors))
 
         result = []
 
@@ -99,6 +100,7 @@ class PenguinParty(MultiPlayerGame):
                     ]
                 )
 
+        print("available_moves > result", result)
         return result
 
     def on_start(self):
