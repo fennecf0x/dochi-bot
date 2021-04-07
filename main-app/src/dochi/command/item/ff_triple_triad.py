@@ -28,7 +28,7 @@ class JoinFFTripleTriad(CommandItem):
             state.games[game.id] = game
             return {
                 **kwargs,
-                "content": "트리플 트라이어드 게임이 만들어졌어!\n참가하려면 '돛 트트 할래'라고 말하면 되고, 옵션을 바꾸려면 '돛 트트 (옵션 이름)ㅇ (옵션 이름)ㄴ'으로 알려주면 돼.\n\n가능한 옵션: 동수, 합산, 순서대로, 무작위순서",
+                "content": "트리플 트라이어드 게임이 만들어졌어!\n참가하려면 '돛 트트 할래'라고 말하면 되고, 옵션을 바꾸려면 '돛 트트 (옵션 이름)ㅇ (옵션 이름)ㄴ'으로 알려주면 돼.\n\n가능한 옵션: 동수, 합산, 순서대로, 무작위순서, 랜덤",
                 "notify": False,
             }
 
@@ -42,9 +42,11 @@ class JoinFFTripleTriad(CommandItem):
         game.start()
         member = message.guild.get_member(game.player_ids[0])
 
+        options = f"\n\n현재 옵션: {', '.join(f'**{key}**' if game.options[key] else f'~~{key}~~' for key in game.options.keys())}"
+
         return {
             **kwargs,
-            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['무작위순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
+            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['무작위순서'] else  '숫자랑 알파벳을 같이'} 써줘!{'' if not game.options['랜덤'] else options}",
         }
 
 
