@@ -28,7 +28,7 @@ class JoinFFTripleTriad(CommandItem):
             state.games[game.id] = game
             return {
                 **kwargs,
-                "content": "트리플 트라이어드 게임이 만들어졌어!\n참가하려면 '돛 트트 할래'라고 말하면 되고, 옵션을 바꾸려면 '돛 트트 (옵션 이름)ㅇ (옵션 이름)ㄴ'으로 알려주면 돼.\n\n가능한 옵션: 동수, 합산, 순서대로, 무작위순서, 랜덤",
+                "content": "트리플 트라이어드 게임이 만들어졌어!\n참가하려면 '돛 트트 할래'라고 말하면 되고, 옵션을 바꾸려면 '돛 트트 (옵션 이름)ㅇ (옵션 이름)ㄴ'으로 알려주면 돼.\n\n가능한 옵션: 동수, 합산, 순서대로, 랜덤순서, 랜덤",
                 "notify": False,
             }
 
@@ -46,7 +46,7 @@ class JoinFFTripleTriad(CommandItem):
 
         return {
             **kwargs,
-            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['무작위순서'] else  '숫자랑 알파벳을 같이'} 써줘!{'' if not game.options['랜덤'] else options}",
+            "content": f"게임 시작! <@!{game.player_ids[0]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['랜덤순서'] else  '숫자랑 알파벳을 같이'} 써줘!{'' if not game.options['랜덤'] else options}",
         }
 
 
@@ -120,7 +120,7 @@ class NotifyFFTripleTriad(CommandItem):
 
         return {
             **kwargs,
-            "content": f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['무작위순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
+            "content": f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['랜덤순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
             "svg": game.print_board(),
         }
 
@@ -148,7 +148,7 @@ class PlayFFTripleTriad(CommandItem):
         if message.author.id not in game.player_ids:
             return {**kwargs, "is_satisfied": False}
 
-        if (game.options["순서대로"] or game.options["무작위순서"]) != (move[0] is None):
+        if (game.options["순서대로"] or game.options["랜덤순서"]) != (move[0] is None):
             return {**kwargs, "is_satisfied": False}
 
         index = game.player_ids.index(message.author.id)
@@ -222,28 +222,28 @@ class ProcessOptionsFFTripleTriad(CommandItem):
             return {**kwargs, "is_satisfied": False}
 
         game: FFTripleTriad = state.games[(True, message.channel.id)]
-        if game.__class__.__name__ != "FFTripleTriad" or not game.is_finished:
+        if game.__class__.__name__ != "FFTripleTriad" or game.has_started:
             return {**kwargs, "is_satisfied": False}
 
         if message.author.id not in game.player_ids:
             return {**kwargs, "is_satisfied": False}
 
-        pattern = r"(동수|합산|순서대로|무작위순서|랜덤)(ㅇ|ㄴ)?(,|\.)?"
+        pattern = r"(동수|합산|순서대로|랜덤순서|랜덤)(ㅇ|ㄴ)?(,|\.)?"
         matches = [
             (option_name, yn_str != "ㄴ")
             for (option_name, yn_str, _) in re.compile(pattern).findall(content)
         ]
 
-        if re.match(r"^((동수|합산|순서대로|무작위순서|랜덤)(ㅇ|ㄴ)?(,|\.)?)+", content) is None:
+        if re.match(r"^((동수|합산|순서대로|랜덤순서|랜덤)(ㅇ|ㄴ)?(,|\.)?)+", content) is None:
             return {**kwargs, "is_satisfied": False}
 
-        if ("순서대로", True) in matches and ("무작위순서", True) in matches:
+        if ("순서대로", True) in matches and ("랜덤순서", True) in matches:
             return {**kwargs, "is_satisfied": False}
 
         if ("순서대로", True) in matches:
-            matches.append(("무작위순서", False))
+            matches.append(("랜덤순서", False))
 
-        if ("무작위순서", True) in matches:
+        if ("랜덤순서", True) in matches:
             matches.append(("순서대로", False))
 
         for (option_name, option_value) in matches:

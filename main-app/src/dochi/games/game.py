@@ -57,7 +57,7 @@ class MultiPlayerGame(Game):
         return False
 
     def terminate(self) -> bool:
-        if self._is_finished:
+        if not self._is_finished:
             self._is_finished = True
             return True
 

@@ -36,7 +36,7 @@ class FFTripleTriad(MultiPlayerGame):
             "동수": False,
             "합산": False,
             "순서대로": False,
-            "무작위순서": False,
+            "랜덤순서": False,
             "랜덤": False,
         }
 
@@ -58,13 +58,13 @@ class FFTripleTriad(MultiPlayerGame):
 
         # TODO: currently hands are determined randomly
         self.hands = [random.sample(cards, 5), random.sample(cards, 5)]
-        if self.options["무작위순서"]:
+        if self.options["랜덤순서"]:
             random.shuffle(self.hands)
 
         if self.options["랜덤"]:
             self.options["동수"] = random.choice([True, False])
             self.options["합산"] = random.choice([True, False])
-            self.options["순서대로"], self.options["무작위순서"] = random.choice(
+            self.options["순서대로"], self.options["랜덤순서"] = random.choice(
                 [
                     (False, False),
                     (False, False),
@@ -77,7 +77,7 @@ class FFTripleTriad(MultiPlayerGame):
         self.prev_message = None
 
     def get_winner(self) -> Optional[int]:  # -1: draw
-        if self.is_finished and self.board[0] is not None:
+        if self.is_finished:
             num_tile = len([tile for tile in self.board if tile[1] == 0])
             return 0 if num_tile > 5 else 1 if num_tile < 5 else -1
 
@@ -91,7 +91,7 @@ class FFTripleTriad(MultiPlayerGame):
         if self.turn_index != player:
             return False
 
-        if self.options["순서대로"] or self.options["무작위순서"]:
+        if self.options["순서대로"] or self.options["랜덤순서"]:
             move = (5 - len([hand for hand in self.hands[player] if hand is None]), move[1])
 
         card_name = self.hands[player][move[0] - 1]
