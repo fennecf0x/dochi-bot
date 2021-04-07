@@ -170,7 +170,7 @@ class DochiBot(discord.Client):
                     }
                 ),
                 MatchRegex(
-                    r"^([1-5])?[\s,\.]*([a-i])|([a-i])[\s,\.]*([1-5])?$", 1, 2, 3, 4
+                    r"^([1-5])?[\s,\.]*([a-i])$|^([a-i])[\s,\.]*([1-5])?$", 1, 2, 3, 4
                 ),
                 MapArgs(
                     lambda c, m, k: {
