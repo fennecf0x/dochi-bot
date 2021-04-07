@@ -39,6 +39,7 @@ class FFTripleTriad(MultiPlayerGame):
             "랜덤순서": False,
             "랜덤": False,
         }
+        self.turn_index = 0
 
     @staticmethod
     def tile_to_str(tile: Tuple[str, int]):
