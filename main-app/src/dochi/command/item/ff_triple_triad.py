@@ -226,13 +226,13 @@ class ProcessOptionsFFTripleTriad(CommandItem):
         if message.author.id not in game.player_ids:
             return {**kwargs, "is_satisfied": False}
 
-        pattern = r"(동수|합산|순서대로|무작위순서)(ㅇ|ㄴ)?(,|\.)?"
+        pattern = r"(동수|합산|순서대로|무작위순서|랜덤)(ㅇ|ㄴ)?(,|\.)?"
         matches = [
             (option_name, yn_str != "ㄴ")
             for (option_name, yn_str, _) in re.compile(pattern).findall(content)
         ]
 
-        if re.match(r"^((동수|합산|순서대로|무작위순서)(ㅇ|ㄴ)?(,|\.)?)+", content) is None:
+        if re.match(r"^((동수|합산|순서대로|무작위순서|랜덤)(ㅇ|ㄴ)?(,|\.)?)+", content) is None:
             return {**kwargs, "is_satisfied": False}
 
         if ("순서대로", True) in matches and ("무작위순서", True) in matches:

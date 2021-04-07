@@ -37,6 +37,7 @@ class FFTripleTriad(MultiPlayerGame):
             "합산": False,
             "순서대로": False,
             "무작위순서": False,
+            "랜덤": False,
         }
 
     @staticmethod
@@ -59,6 +60,18 @@ class FFTripleTriad(MultiPlayerGame):
         self.hands = [random.sample(cards, 5), random.sample(cards, 5)]
         if self.options["무작위순서"]:
             random.shuffle(self.hands)
+
+        if self.options["랜덤"]:
+            self.options["동수"] = random.choice([True, False])
+            self.options["합산"] = random.choice([True, False])
+            self.options["순서대로"], self.options["무작위순서"] = random.choice(
+                [
+                    (False, False),
+                    (False, False),
+                    (False, True),
+                    (True, False),
+                ]
+            )
 
         self.hand_messages = [None, None]
         self.prev_message = None
