@@ -136,6 +136,7 @@ class DochiBot(discord.Client):
                 JoinFFTripleTriad(),
                 NotifyFFTripleTriad(),
                 Send(),
+                StoreFFTripleTriadMessage(),
             ),
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
