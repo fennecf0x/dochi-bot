@@ -99,28 +99,34 @@ class NotifyFFTripleTriad(CommandItem):
             }
 
         if game.hand_messages[game.turn_index] is None:
-            game.hand_messages[game.turn_index] = (await Send()(
+            game.hand_messages[game.turn_index] = (
+                await Send()(
+                    client,
+                    message,
+                    content=f"<@!{game.player_ids[game.turn_index]}>의 덱",
+                    svg=game.print_hand(game.turn_index),
+                    dm=message.guild.get_member(game.player_ids[game.turn_index]),
+                )
+            )["prev_message"]
+
+        game.hand_messages[1 - game.turn_index] = (
+            await Send()(
                 client,
                 message,
-                content=f"<@!{game.player_ids[game.turn_index]}>의 덱",
-                svg=game.print_hand(game.turn_index),
-                dm=message.guild.get_member(game.player_ids[game.turn_index]),
-            ))["prev_message"]
-
-        game.hand_messages[1 - game.turn_index] = (await Send()(
-            client,
-            message,
-            content=f"<@!{game.player_ids[1 - game.turn_index]}>의 덱",
-            svg=game.print_hand(1 - game.turn_index),
-            dm=message.guild.get_member(game.player_ids[1 - game.turn_index]),
-        ))["prev_message"]
+                content=f"<@!{game.player_ids[1 - game.turn_index]}>의 덱",
+                svg=game.print_hand(1 - game.turn_index),
+                dm=message.guild.get_member(game.player_ids[1 - game.turn_index]),
+            )
+        )["prev_message"]
 
         curr_player = game.turn_index
         member = message.guild.get_member(game.player_ids[curr_player])
 
         return {
             **kwargs,
-            "content": f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['랜덤순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
+            "content": kwargs["content"]
+            if kwargs["content"].startswith("게임 시작")
+            else f"<@!{game.player_ids[curr_player]}>{tossi.pick(member.nick or member.name, '이')} 할 차례야. 패를 보고 해당하는 {'알파벳을' if game.options['순서대로'] or game.options['랜덤순서'] else  '숫자랑 알파벳을 같이'} 써줘!",
             "svg": game.print_board(),
         }
 
