@@ -9,6 +9,7 @@ import tossi
 import re
 import asyncio
 from typing import Tuple, Optional
+from contextlib import suppress
 
 
 class JoinFFTripleTriad(CommandItem):
@@ -73,7 +74,8 @@ class NotifyFFTripleTriad(CommandItem):
             return kwargs
 
         if game.hand_messages[1 - game.turn_index] is not None:
-            await asyncio.gather(*[m.delete() for m in game.hand_messages])
+            with suppress(Exception):
+                await game.hand_messages[1 - game.turn_index].delete()
 
         if game.get_winner() is not None:
             winner = game.get_winner()
