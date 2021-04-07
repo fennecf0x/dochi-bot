@@ -158,7 +158,7 @@ class DochiBot(discord.Client):
                 Send(),
             ),
             Command(
-                StartsWithDochi(),
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 OneOf(
                     MatchRegex(
                         r"^(파판|ff|FF|파이널판타지)?\s*(트리플\s*트라이어드|트\.?트|카드\s*게임)\s*(.*?)$", 3
@@ -203,7 +203,7 @@ class DochiBot(discord.Client):
                 StorePenguinPartyMessage(),
             ),
             Command(
-                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StartsWithDochi(),
                 MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(나갈래|퇴장)$"),
                 ExitPenguinParty(),
                 Send(),
