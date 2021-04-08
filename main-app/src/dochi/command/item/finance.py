@@ -2,6 +2,7 @@ from typing import TypedDict, Tuple, Literal, Union, Optional, cast
 import re
 import time
 import tempfile
+import math
 import tossi
 import numpy as np
 import discord
@@ -260,7 +261,7 @@ class CheckWallet(CommandItem):
         else:
             content = (
                 ", ".join(
-                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, precision=2, trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
+                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, precision=max(0, 7 - math.ceil( math.log10(currency.amount))), trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
                     for currency in currencies
                 )
                 + " 있어"
@@ -327,22 +328,18 @@ class CheckCurrencyPrice(CommandItem):
             and currency_record.timestamp > timestamp - 60 * minutes
         ]
 
-
         with tempfile.NamedTemporaryFile(suffix=".png") as temp:
             timestamps = [-round(r[0]) / 60 for r in currency_records]
             prices = [r[1] for r in currency_records]
-            
-            plt.plot(timestamps, prices, color='red')
-            plt.xlabel('minutes', fontsize=14)
+
+            plt.plot(timestamps, prices, color="red")
+            plt.xlabel("minutes", fontsize=14)
             plt.grid(True)
 
             plt.savefig(temp.name, format="png")
             plt.clf()
 
-            await message.channel.send(
-                file=discord.File(temp.name)
-            )
-
+            await message.channel.send(file=discord.File(temp.name))
 
         # do not proceed afterward
         return {**kwargs, "is_satisfied": False}
