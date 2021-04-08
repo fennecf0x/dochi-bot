@@ -344,7 +344,7 @@ class CheckCurrencyPrice(CommandItem):
                 'using 1:2 with line lw 2 lc "web-blue"',
                 term="pngcairo size 720,480",
                 out='"' + temp_png.name + '"',
-                title=f'"{currency_type_ko(currency_type)}" 최근 {minutes}분 그래프',
+                title=f'"{currency_type_ko(currency_type)} 최근 {minutes}분 그래프"',
                 xlabel='"Minutes"',
                 xrange=f"[{-minutes}:0]",
                 key=None,
