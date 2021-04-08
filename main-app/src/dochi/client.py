@@ -1,7 +1,9 @@
 import os
 import re
 import math
+import time
 from datetime import datetime, timedelta
+from threading import Thread
 
 import discord
 import tossi
@@ -13,6 +15,8 @@ from .state import state, State
 from .database import get, currency_type_ko, CurrencyType
 from .command import *
 from dochi.command.patterns import digits_of_pi, 줘, 봐, 뭐, 뭘
+
+from .finance.coin_price import update_price, initialize_coin_params
 
 
 class DochiBot(discord.Client):
@@ -74,7 +78,6 @@ class DochiBot(discord.Client):
             ExactString("호감도"),
             Args(ignore_likability_update=True),
             SerializeLikability(),
-            MapArgs({"likability": "content"}),
             Send(),
         )
 
@@ -83,7 +86,6 @@ class DochiBot(discord.Client):
             MatchRegex(r"\s*(.*?)\s*목록$", 1),
             MapArgs({"groups": "content"}),
             StripWhitespaces(),
-            MapArgs({"content": "query"}),
             SendList(),
         )
 
@@ -325,6 +327,20 @@ class DochiBot(discord.Client):
                 Args(content="그랭"),
                 Send(),
             ),
+            Command(
+                StartsWithDochi(),
+                StripWhitespaces(),
+                IsTransacting(),
+                TransactCurrency(),
+                Send(),
+            ),
+            Command(
+                StartsWithDochi(),
+                StripWhitespaces(),
+                IsCheckingCurrencyPrice(),
+                CheckCurrencyPrice(),
+                Send(),
+            ),
         )
 
         shout_command = Command(
@@ -352,10 +368,39 @@ class DochiBot(discord.Client):
 
     async def on_ready(self):
         # add jobs to the scheduler
-        schedule.add_job(schedule.change_mood, args=[self], hours=1)
+        schedule.add_job(schedule.change_mood, args=[], hours=1)
+        schedule.add_job(schedule.decrease_likability, args=[], minutes=30, now=False)
         schedule.add_job(
-            schedule.decrease_likability, args=[self], minutes=30, now=False
+            schedule.update_coin_price_database, args=[], seconds=10, now=False
         )
+        schedule.add_job(
+            update.drop_old_currency_price_records, args=[1], hours=6, now=False
+        )
+
+        coin_threads: dict = {}
+        MAX_COIN_PRICES_LEN = 10000
+
+        def run_update_price_thread(currency_type):
+            while True:
+                update_price(
+                    state.coin_constants[currency_type],
+                    state.coin_params[currency_type],
+                )
+                update.currency_price_record(
+                    currency_type,
+                    timestamp=time.time(),
+                    price=state.coin_params[currency_type].price,
+                )
+
+        # add coin price updater
+        for currency_type in state.coin_constants:
+            state.coin_params[currency_type] = initialize_coin_params(
+                currency_type, state.coin_constants[currency_type]
+            )
+            thread = Thread(target=run_update_price_thread, args=(currency_type,))
+            thread.setDaemon(True)
+            thread.start()
+            coin_threads[currency_type] = thread
 
         await self.change_presence(status=discord.Status.offline)
         print("Logged on as", self.user)

@@ -57,6 +57,48 @@ class Currency(Base):
     amount = peewee.FloatField(default=0.0)
 
 
+class CurrencyInfo(Base):
+    """
+    Currency price varying info:
+
+    * price
+    * timer_inc
+    * timer_inc_thres
+    * timer_dec
+    * timer_dec_thres
+    * ewma1
+    * ewma2
+    * ewma2_flag
+    """
+
+    """currency type: string"""
+    currency_type = peewee.TextField()
+
+    price = peewee.FloatField()
+    timer_inc = peewee.FloatField()
+    timer_inc_thres = peewee.FloatField()
+    timer_dec = peewee.FloatField()
+    timer_dec_thres = peewee.FloatField()
+    ewma1 = peewee.FloatField()
+    ewma2 = peewee.FloatField()
+    ewma2_flag = peewee.FloatField()
+
+
+class CurrencyPriceRecord(Base):
+    """
+    Currency price records:
+
+    * currency_type
+    * price
+    * timestamp
+    """
+
+    """currency type: string"""
+    currency_type = peewee.TextField()
+    price = peewee.FloatField()
+    timestamp = peewee.FloatField()
+
+
 class Item(Base):
     """
     Item model

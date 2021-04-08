@@ -32,4 +32,4 @@ class SerializeLikability(CommandItem):
             f"존경: {likability.respectfulness - likability.disrespectfulness:.2f}\n"
         )
 
-        return {**kwargs, "likability": serialized_likability}
+        return {**kwargs, "content": serialized_likability}

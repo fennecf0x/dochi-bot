@@ -18,6 +18,7 @@ class Send(CommandItem):
         message: discord.Message,
         *,
         content: str,
+        file: Optional[discord.File] = None,
         url: Optional[str] = None,
         svg: Optional[str] = None,
         reply: bool = False,
@@ -26,13 +27,24 @@ class Send(CommandItem):
         **kwargs,
     ):
         # text only
-        if url is None and svg is None:
+        if url is None and svg is None and file is None:
             if reply:
                 prev_message = await message.reply(content, mention_author=mention_author)
             elif dm is not None:
                 prev_message = await dm.send(content)
             else:
                 prev_message = await message.channel.send(content)
+
+            return {**kwargs, "prev_message": prev_message}
+
+        # has a file
+        if file is not None:
+            if reply:
+                prev_message = await message.reply(content=content, file=file, mention_author=mention_author)
+            elif dm is not None:
+                prev_message = await dm.send(content=content, file=file)
+            else:
+                prev_message = await message.channel.send(content=content, file=file)
 
             return {**kwargs, "prev_message": prev_message}
 

@@ -4,7 +4,7 @@ update.py
 Utils for updating database
 """
 
-from typing import List
+from typing import List, Optional
 import peewee
 
 from .db import db
@@ -22,6 +22,20 @@ def user(user_id: str) -> model.User:
 
 def currencies(user_id: str) -> List[model.Currency]:
     return list(user(user_id).currencies)
+
+
+def currency_info(currency_type: CurrencyType) -> Optional[model.CurrencyInfo]:
+    try:
+        currency_name = currency_type.name
+        return model.CurrencyInfo.get(model.CurrencyInfo.currency_type == currency_name)
+
+    except model.CurrencyInfo.DoesNotExist:  # pylint: disable=maybe-no-member
+        return None
+
+
+def currency_price_record(currency_type: CurrencyType) -> List[model.CurrencyPriceRecord]:
+    currency_name = currency_type.name
+    return list(model.CurrencyPriceRecord.select().where(model.CurrencyPriceRecord.currency_type == currency_name))
 
 
 def inventory(user_id: str) -> List[model.Item]:

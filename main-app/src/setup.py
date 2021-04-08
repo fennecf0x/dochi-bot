@@ -25,4 +25,4 @@ state.root = dirname(__file__)
 #
 from dochi.database import db, model
 
-db.create_tables([model.User, model.Currency])
+db.create_tables([model.User, model.Currency, model.Item, model.CurrencyInfo, model.CurrencyPriceRecord])

@@ -7,8 +7,9 @@ class CurrencyType(Enum):
     DOCHI_COIN = 1
     HONEYWORKS_CASH = 2
     AYACHISAAYA = 3
-    YEONOO = 4
+    YEONOO_COIN = 4
     FFXIV = 5
+    ROOT_COIN = 6
 
 
 def currency_type_ko(currency_type: CurrencyType) -> str:
@@ -20,27 +21,31 @@ def currency_type_ko(currency_type: CurrencyType) -> str:
         return "허니웍스캐시"
     if currency_type == CurrencyType.AYACHISAAYA:
         return "아야치사아야"
-    if currency_type == CurrencyType.YEONOO:
+    if currency_type == CurrencyType.YEONOO_COIN:
         return "연오코인"
     if currency_type == CurrencyType.FFXIV:
         return "파이널판타지XIV"
+    if currency_type == CurrencyType.ROOT_COIN:
+        return "루토코인"
 
     return "Unknown currency"
 
 
 def currency_name_type(currency_name: str) -> Optional[CurrencyType]:
-    if currency_name == "MONEY":
+    if currency_name in ["MONEY", "돈"]:
         return CurrencyType.MONEY
-    if currency_name == "DOCHI_COIN":
+    if currency_name in ["DOCHI_COIN", "도치코인"]:
         return CurrencyType.DOCHI_COIN
-    if currency_name == "HONEYWORKS_CASH":
+    if currency_name in ["HONEYWORKS_CASH", "허니웍스캐시"]:
         return CurrencyType.HONEYWORKS_CASH
-    if currency_name == "AYACHISAAYA":
+    if currency_name in ["AYACHISAAYA", "아야치사아야"]:
         return CurrencyType.AYACHISAAYA
-    if currency_name == "YEONOO":
-        return CurrencyType.YEONOO
-    if currency_name == "FFXIV":
+    if currency_name in ["YEONOO_COIN", "연오코인"]:
+        return CurrencyType.YEONOO_COIN
+    if currency_name in ["FFXIV", "파이널판타지XIV", "파판XIV", "파이널판타지14", "파판14"]:
         return CurrencyType.FFXIV
+    if currency_name in ["ROOT_COIN", "루토코인"]:
+        return CurrencyType.ROOT_COIN
 
     return None
 

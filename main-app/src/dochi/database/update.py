@@ -5,6 +5,7 @@ Utils for updating database
 """
 
 from typing import Optional
+import time
 
 from .types import CurrencyType
 from ..database import get, model
@@ -52,6 +53,70 @@ def currency(
         )
 
         return currency
+
+
+def currency_info(
+    currency_type: CurrencyType,
+    *,
+    price: float,
+    timer_inc: float,
+    timer_inc_thres: float,
+    timer_dec: float,
+    timer_dec_thres: float,
+    ewma1: float,
+    ewma2: float,
+    ewma2_flag: float,
+) -> model.CurrencyInfo:
+    try:
+        currency_info = model.CurrencyInfo.get(currency_type=currency_type.name)
+        currency_info.price = price
+        currency_info.timer_inc = timer_inc
+        currency_info.timer_inc_thres = timer_inc_thres
+        currency_info.timer_dec = timer_dec
+        currency_info.timer_dec_thres = timer_dec_thres
+        currency_info.ewma1 = ewma1
+        currency_info.ewma2 = ewma2
+        currency_info.ewma2_flag = ewma2_flag
+        currency_info.save()
+
+        return currency_info
+
+    except model.CurrencyInfo.DoesNotExist:  # pylint: disable=maybe-no-member
+        currency_info = model.CurrencyInfo.create(
+            currency_type=currency_type.name,
+            price=price,
+            timer_inc=timer_inc,
+            timer_inc_thres=timer_inc_thres,
+            timer_dec=timer_dec,
+            timer_dec_thres=timer_dec_thres,
+            ewma1=ewma1,
+            ewma2=ewma2,
+            ewma2_flag=ewma2_flag,
+        )
+
+        return currency_info
+
+
+def currency_price_record(
+    currency_type: CurrencyType,
+    *,
+    timestamp: float,
+    price: float
+) -> model.CurrencyPriceRecord:
+    currency_price_record = model.CurrencyPriceRecord.create(
+        currency_type=currency_type.name,
+        timestamp=timestamp,
+        price=price,
+    )
+
+    return currency_price_record
+
+
+def drop_old_currency_price_records(days: int):
+    time_criterion = time.time() - days * 24 * 60 * 60
+    model.CurrencyPriceRecord.delete().where(
+        model.CurrencyPriceRecord.timestamp < time_criterion
+    ).execute()
 
 
 def inventory(

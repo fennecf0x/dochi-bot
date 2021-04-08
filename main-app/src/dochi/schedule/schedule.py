@@ -16,6 +16,7 @@ import math
 from dochi.database import get, model, update
 
 from ..state import state
+from ..finance.coin_price import update_coin_params
 
 scheduler = AsyncIOScheduler()
 
@@ -39,7 +40,7 @@ def add_job(func, *, weeks=0, days=0, hours=0, minutes=0, seconds=0, now=True, *
     )
 
 
-def change_mood(client: discord.Client):
+def change_mood():
     five_days_in_seconds = 5 * 24 * 60 * 60
 
     mood = math.sin(2 * math.pi / five_days_in_seconds * time.time()) + random.uniform(
@@ -52,7 +53,7 @@ def change_mood(client: discord.Client):
     print("mood changed")
 
 
-def decrease_likability(client: discord.Client):
+def decrease_likability():
     for user in list(model.User.select()):
         likability = get.likability_from_user(user)
         after_decrement = lambda v, r: max(
@@ -70,3 +71,9 @@ def decrease_likability(client: discord.Client):
         )
 
     print("likability decreased")
+
+
+def update_coin_price_database():
+    for currency_type in state.coin_params:
+        update_coin_params(currency_type, state.coin_params[currency_type])
+        print(state.coin_params[currency_type])
