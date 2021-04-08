@@ -19,7 +19,8 @@ tossi==0.3.1
 # math
 numpy==1.20.1
 gmpy2==2.0.8
-matplotlib==3.4.1
+pandas==1.2.3
+py-gnuplot==1.1.7
 
 # scheduling
 APScheduler==3.7.0

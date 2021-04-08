@@ -1,4 +1,5 @@
 from typing import TypedDict, Tuple, Literal, Union, Optional, cast
+import asyncio
 import re
 import time
 import tempfile
@@ -11,7 +12,10 @@ from ..patterns import 줘, 게, 했
 from ...database import get, update
 from ...database.types import CurrencyType, currency_name_type, currency_type_ko
 from ...state import state
-from matplotlib import pyplot as plt
+
+from pygnuplot import gnuplot
+import pandas as pd
+
 
 """
 Committing transaction
@@ -328,18 +332,29 @@ class CheckCurrencyPrice(CommandItem):
             and currency_record.timestamp > timestamp - 60 * minutes
         ]
 
-        with tempfile.NamedTemporaryFile(suffix=".png") as temp:
+        with tempfile.NamedTemporaryFile(suffix=".png") as temp_png:
+            g = gnuplot.Gnuplot(log=True)
+
             timestamps = [-round(r[0]) / 60 for r in currency_records]
             prices = [r[1] for r in currency_records]
 
-            plt.plot(timestamps, prices, color="red")
-            plt.xlabel("minutes", fontsize=14)
-            plt.grid(True)
+            df = pd.DataFrame(data={"prices": prices}, index=timestamps)
+            g.plot_data(
+                df,
+                'using 1:2 with line lw 2 lc "web-blue"',
+                term="pngcairo size 720,480",
+                out='"' + temp_png.name + '"',
+                title=f'"{currency_type_ko(currency_type)}" 최근 {minutes}분 그래프',
+                xlabel='"Minutes"',
+                xrange=f"[{-minutes}:0]",
+                key=None,
+                size="1, 1",
+                origin="0, 0",
+            )
 
-            plt.savefig(temp.name, format="png")
-            plt.clf()
+            await asyncio.sleep(0.5)
 
-            await message.channel.send(file=discord.File(temp.name))
+            await message.channel.send(file=discord.File(temp_png.name))
 
         # do not proceed afterward
         return {**kwargs, "is_satisfied": False}
