@@ -261,7 +261,7 @@ class CheckWallet(CommandItem):
         else:
             content = (
                 ", ".join(
-                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, precision=max(0, 7 - math.ceil( math.log10(currency.amount))) if currency.currency_type != CurrencyType.MONEY else 0, trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
+                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, precision=max(0, 7 - math.ceil( math.log10(currency.amount))) if currency.currency_type != 'MONEY' else 0, trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
                     for currency in currencies
                 )
                 + " 있어"
