@@ -8,7 +8,7 @@ ujson==4.0.2
 discord.py[voice]~=1.6.0
 discord.py-stubs~=1.6.0.2
 ffmpeg==1.4
-PyNaCl==1.4.0
+https://www.piwheels.org/simple/pynacl/PyNaCl-1.4.0-cp37-cp37m-linux_armv7l.whl#sha256=d38dc5f47724bc1487b56b4776a1b64459acd6b8c9cb544db6eba60977821c1c # pynacl
 
 # database
 peewee==3.14.1
@@ -17,15 +17,15 @@ peewee==3.14.1
 tossi==0.3.1
 
 # math
-numpy==1.20.1
+https://www.piwheels.org/simple/numpy/numpy-1.20.2-cp37-cp37m-linux_armv7l.whl#sha256=4b5a485d5aeed9b403d475dd3db750ae52f085f56f15c19a56b00ddf99597de5 # numpy
 gmpy2==2.0.8
-pandas==1.2.3
+https://www.piwheels.org/simple/pandas/pandas-1.2.3-cp37-cp37m-linux_armv7l.whl#sha256=1dea98e719e7d64de7c204da53bae2973676aab59e4ac0f3079068cf365e7cfb # pandas
 py-gnuplot==1.1.7
 
 # scheduling
 APScheduler==3.7.0
 
 # images
-pycairo==1.20.0
+https://www.piwheels.org/simple/pycairo/pycairo-1.20.0-cp37-cp37m-linux_armv7l.whl#sha256=2097f748c04d95c86f0c03f62dddf727cc4fa30d1c0e70238c8985ba6b478f96 # pycairo
 gobject==0.1.0
 PyGObject==3.38.0

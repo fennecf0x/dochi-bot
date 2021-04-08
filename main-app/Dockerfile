@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:experimental
 # DOCKER_BUILDKIT=1 docker build -t dochi-bot-main-app .
 
-FROM python:3.9-slim
+FROM python:3.7-slim
 
 # Install tools for building wheels
 RUN apt-get update
