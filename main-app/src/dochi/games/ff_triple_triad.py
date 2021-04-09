@@ -30,6 +30,7 @@ class FFTripleTriad(MultiPlayerGame):
     def __init__(self, client: discord.Client, channel_id: int, player_id: int):
         super().__init__(client, channel_id, player_id, 2)
         self.prev_message: Optional[discord.Message] = None
+        self.hands = [[], []]
         self.hand_messages: List[Optional[discord.Message]] = [None, None]
         self.board: List[Optional[Tuple[str, int]]] = [None] * 9
         self.options = {
