@@ -339,22 +339,18 @@ class CheckWallet(CommandItem):
             content = "돈이 없어"
 
         else:
+            def refine_amount(currency):
+                if currency.currency_type == "MONEY":
+                    return math.floor(currency.amount)
 
-            def print_currency(currency):
                 exp = 10 ** max(0, 7 - math.ceil(math.log10(currency.amount)))
-                return np.format_float_positional(
-                    math.floor(currency.amount * exp) / exp,
-                    precision=max(0, 7 - math.ceil(math.log10(currency.amount)))
-                    if currency.currency_type != "MONEY"
-                    else 0,
-                    trim="-",
-                )
+                return math.floor(currency.amount * exp) / exp
 
             content = (
                 ", ".join(
-                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {print_currency(currency)}{'원' if currency.currency_type == 'MONEY' else '개'}"
+                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {refine_amount(currency)}{'원' if currency.currency_type == 'MONEY' else '개'}"
                     for currency in currencies
-                    if currency.amount > 0
+                    if refine_amount(currency) > 0
                 )
                 + " 있어"
             )
