@@ -340,6 +340,7 @@ class DochiBot(discord.Client):
                 Send(),
             ),
             Command(
+                IsAdmin(),
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
                 MatchRegex(r"<@!(\d+)>에게서(\d+)원몰수", 1, 2),
