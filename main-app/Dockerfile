@@ -38,9 +38,9 @@ WORKDIR /app
 COPY ./src .
 
 # update PATH environment variable
-ENV PATH=/root/.local:/root/.local/lib:/root/.local/lib/python3.9:/root/.local/lib/python3.9/site-packages:$PATH
+ENV PATH=/root/.local:/root/.local/lib:/root/.local/lib/python3.7:/root/.local/lib/python3.7/site-packages:$PATH
 ENV PYTHONPATH=/app:$PATH
 ENV AM_I_IN_A_DOCKER_CONTAINER=true
 
 
-CMD ["python3.9", "main.py"]
+CMD ["python3.7", "main.py"]
