@@ -6,6 +6,7 @@ docker run -d \
     --name dochi-bot-main-app \
     --mount type=bind,source="$(pwd)"/database,target=/app/database \
     --mount type=bind,source="$(pwd)"/assets,target=/app/assets \
+    --mount type=bind,source="$(pwd)"/cache,target=/app/cache \
     --env-file "$(pwd)"/main-app/.env \
     dochi-bot-main-app
 
