@@ -219,7 +219,12 @@ class IsCheckingWallet(CommandItem):
 
 
 class ChangeFinance(CommandItem):
-    def __init__(self, currency_type: CurrencyType, amount: float, incremental: bool):
+    def __init__(
+        self,
+        currency_type: Optional[CurrencyType] = None,
+        amount: Optional[float] = None,
+        incremental: Optional[bool] = None,
+    ):
         self.currency_type = currency_type
         self.amount = amount
         self.incremental = incremental
@@ -228,26 +233,36 @@ class ChangeFinance(CommandItem):
         self,
         client: discord.Client,
         message: discord.Message,
+        *,
+        user_id: Optional[int] = None,
+        currency_type: Optional[CurrencyType] = None,
+        amount: Optional[float] = None,
+        incremental: Optional[bool] = None,
         **kwargs,
     ):
+        user_id = str(user_id or message.author.id)
+        currency_type = currency_type or self.currency_type
+        amount = amount or self.amount
+        incremental = incremental or self.incremental
+
         base = 0
 
-        if self.incremental:
-            currencies = get.currencies(str(message.author.id))
+        if incremental:
+            currencies = get.currencies(user_id)
             money_currency = next(
                 (
                     currency
                     for currency in currencies
-                    if currency.currency_type == self.currency_type.name
+                    if currency.currency_type == currency_type.name
                 ),
                 None,
             )
             base = money_currency.amount if money_currency is not None else 0
 
         update.currency(
-            str(message.author.id),
-            currency_type=self.currency_type,
-            amount=max(base + self.amount, 0),
+            user_id,
+            currency_type=currency_type,
+            amount=max(base + amount, 0),
         )
 
         return kwargs
@@ -267,7 +282,8 @@ class CheckWallet(CommandItem):
             content = (
                 ", ".join(
                     f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, precision=max(0, 7 - math.ceil( math.log10(currency.amount))) if currency.currency_type != 'MONEY' else 0, trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
-                    for currency in currencies if currency.amount > 0
+                    for currency in currencies
+                    if currency.amount > 0
                 )
                 + " 있어"
             )

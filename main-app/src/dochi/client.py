@@ -329,6 +329,20 @@ class DochiBot(discord.Client):
                 Send(),
             ),
             Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StripWhitespaces(),
+                MatchRegex(r"<@!(\d+)>에게(\d+)원기부", 1, 2),
+                MapArgs(lambda c, m, k: {
+                    "amount": float(k["groups"][1]),
+                    "user_id": int(k["groups"][0]),
+                })
+                ChangeFinance(
+                    currency_type=CurrencyType.MONEY, incremental=True
+                ),
+                Args(content="전달햇어"),
+                Send(),
+            ),
+            Command(
                 IsAdmin(),
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
