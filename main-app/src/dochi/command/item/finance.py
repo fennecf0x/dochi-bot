@@ -268,6 +268,64 @@ class ChangeFinance(CommandItem):
         return kwargs
 
 
+class DonateMoney(CommandItem):
+    async def __call__(  # type: ignore
+        self,
+        client: discord.Client,
+        message: discord.Message,
+        *,
+        user_id: int,
+        currency_type: CurrencyType = CurrencyType.MONEY,
+        amount: float,
+        **kwargs,
+    ):
+        currency_type = currency_type or self.currency_type
+        amount = amount or self.amount
+        incremental = incremental or self.incremental
+
+        base = 0
+
+        author_currencies = get.currencies(str(message.author.id))
+        author_currency = next(
+            (
+                currency
+                for currency in currencies
+                if currency.currency_type == currency_type.name
+            ),
+            None,
+        )
+        author_currency = author_currency.amount if author_currency is not None else 0
+
+        if author_currency < amount:
+            return {**kwargs, "content": "전달할 돈이 없넹"}
+
+        update.currency(
+            str(message.author.id),
+            currency_type=currency_type,
+            amount=max(author_currency - amount, 0),
+        )
+
+        # receive
+        receiver_currencies = get.currencies(str(user_id))
+        receiver_currency = next(
+            (
+                currency
+                for currency in currencies
+                if currency.currency_type == currency_type.name
+            ),
+            None,
+        )
+        receiver_currency = receiver_currency.amount if receiver_currency is not None else 0
+
+        update.currency(
+            str(user_id),
+            currency_type=currency_type,
+            amount=max(receiver_currency + amount, 0),
+        )
+
+        return kwargs
+
+
 class CheckWallet(CommandItem):
     async def __call__(  # type: ignore
         self,

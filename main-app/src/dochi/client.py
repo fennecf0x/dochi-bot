@@ -336,9 +336,7 @@ class DochiBot(discord.Client):
                     "amount": float(k["groups"][1]),
                     "user_id": int(k["groups"][0]),
                 }),
-                ChangeFinance(
-                    currency_type=CurrencyType.MONEY, incremental=True
-                ),
+                DonateMoney(),
                 Args(content="전달햇어"),
                 Send(),
             ),
