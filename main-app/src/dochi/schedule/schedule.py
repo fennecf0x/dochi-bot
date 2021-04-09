@@ -76,4 +76,3 @@ def decrease_likability():
 def update_coin_price_database():
     for currency_type in state.coin_params:
         update_coin_params(currency_type, state.coin_params[currency_type])
-        print(state.coin_params[currency_type])

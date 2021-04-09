@@ -284,22 +284,22 @@ class IsCheckingCurrencyPrice(CommandItem):
         content: str,
         **kwargs,
     ):
-        pattern = rf"^(.*?)(((최근)?(가격|그래프)|(가격|그래프)최근)((한시간|1시간)|([1-9]|[1-5][0-9])분)|(최근)?((한시간|1시간)|([1-9]|[1-5][0-9])분)(가격|그래프))(알려{줘})?$"
+        pattern = rf"^(.*?)(((최근)?(가격|그래프)|(가격|그래프)최근)(((1?[1-9]|2[0-4])시간)|([1-9]|[1-5][0-9])분)|(최근)?(((1?[1-9]|2[0-4])시간)|([1-9]|[1-5][0-9])분)(가격|그래프))(알려{줘})?$"
         match = re.match(pattern, content)
 
         if match is None:
             return {**kwargs, "is_satisfied": False}
 
-        (currency_name, one_hour_1, one_hour_2, minutes_1, minutes_2) = match.group(
-            1, 8, 12, 9, 13
+        (currency_name, hours_1, hours_2, minutes_1, minutes_2) = match.group(
+            1, 9, 14, 10, 15
         )
 
         currency_type = currency_name_type(currency_name)
         if currency_type is None:
             return {**kwargs, "is_satisfied": False}
 
-        if one_hour_1 or one_hour_2:
-            minutes = 60
+        if (hours_1 or hours_2) is not None:
+            minutes = 60 * int(hours_1 or hours_2)
 
         if (minutes_1 or minutes_2) is not None:
             minutes = int(minutes_1 or minutes_2)
