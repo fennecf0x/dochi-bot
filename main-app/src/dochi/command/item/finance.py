@@ -288,7 +288,7 @@ class DonateMoney(CommandItem):
         author_currency = next(
             (
                 currency
-                for currency in currencies
+                for currency in author_currencies
                 if currency.currency_type == currency_type.name
             ),
             None,
@@ -309,7 +309,7 @@ class DonateMoney(CommandItem):
         receiver_currency = next(
             (
                 currency
-                for currency in currencies
+                for currency in receiver_currencies
                 if currency.currency_type == currency_type.name
             ),
             None,
