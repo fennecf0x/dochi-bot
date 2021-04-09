@@ -42,7 +42,7 @@ class State:
     mood: float
     root: str
     muted: Set[int]
-    games: dict[Tuple[bool, str, int], Game]
+    games: dict #[Tuple[bool, str, int], Game]
     coin_constants: dict  # dict[CurrencyType, CoinPriceConstants]
     coin_params: dict  # dict[CurrencyType, CoinPriceParams]
 

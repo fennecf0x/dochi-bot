@@ -131,7 +131,7 @@ class PenguinParty(MultiPlayerGame):
         self.turn_index = 0
         self.surrendered_player_index = set()
 
-    def get_scores(self) -> Optional[dict[int, int]]:
+    def get_scores(self): # -> Optional[dict[int, int]]:
         if self.is_finished:
             return dict(
                 [

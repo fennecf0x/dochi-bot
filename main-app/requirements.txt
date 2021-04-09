@@ -3,6 +3,7 @@ wheel
 aiohttp==3.7.4
 requests==2.25.1
 ujson==4.0.2
+typing-extensions
 
 # discord
 discord.py[voice]~=1.6.0
