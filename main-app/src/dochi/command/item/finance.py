@@ -26,12 +26,12 @@ Committing transaction
 class TransactionReturnType(TypedDict):
     currency_type: CurrencyType
     price_per: Optional[float]
-    amount: Tuple[float, Literal["개", "원"]]
+    amount: Optional[Tuple[float, Literal["개", "원"]]]
     transaction_type: Literal["BUY", "SELL"]
 
 
 def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
-    pattern = rf"^([가-힣A-Za-z]*?)((0|[1-9]\d*)(\.\d*)?)원(일때|에서|에)((((0|[1-9]\d*)(\.\d*)?)개)|(((0|[1-9]\d*)(\.\d*)?)원(어치|만큼)))만?(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
+    pattern = rf"^([가-힣A-Za-z]*?)((0|[1-9]\d*)(\.\d*)?)원(일때|에서|에)((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
     match = re.match(pattern, string)
 
     if match is not None:
@@ -40,8 +40,10 @@ def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
         )
 
     else:
-        pattern = rf"^([가-힣A-Za-z]*?)?(지금)?(바로|즉시)?((((0|[1-9]\d*)(\.\d*)?)개)|(((0|[1-9]\d*)(\.\d*)?)원(어치|만큼)))만?(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
+        pattern = rf"^([가-힣A-Za-z]*?)?(지금)?(바로|즉시)?((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
         match = re.match(pattern, string)
+
+        print(match)
 
         if match is None:
             return None
@@ -62,7 +64,7 @@ def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
         "amount": (
             float(total_amount or total_price),
             "개" if total_price is None else "원",
-        ),
+        ) if (total_amount or total_price) is not None else None,
         "transaction_type": "BUY" if is_buying is not None else "SELL",
     }
 
@@ -95,7 +97,7 @@ class TransactCurrency(CommandItem):
         content: str,
         currency_type: CurrencyType,
         price_per: Optional[float],
-        amount: Tuple[float, Literal["개", "원"]],
+        amount: Optional[Tuple[float, Literal["개", "원"]]],
         transaction_type: Literal["BUY", "SELL"],
         **kwargs,
     ):
@@ -129,10 +131,18 @@ class TransactCurrency(CommandItem):
         )
         user_coin = coin_currency.amount if coin_currency is not None else 0
 
-        money_required = (
-            amount[0] if amount[1] == "원" else amount[0] * current_price_per
-        )
-        coin_required = money_required / current_price_per
+        if amount is None:
+            if transaction_type == "BUY":
+                money_required = user_money
+                coin_required = money_required / current_price_per
+            else:
+                coin_required = user_coin
+                money_required = coin_required * current_price_per
+        else:
+            money_required = (
+                amount[0] if amount[1] == "원" else amount[0] * current_price_per
+            )
+            coin_required = money_required / current_price_per
 
         if transaction_type == "BUY" and user_money < money_required:
             return {**kwargs, "content": "돈이 부족해 :sob:"}
@@ -335,16 +345,24 @@ class CheckWallet(CommandItem):
         **kwargs,
     ):
         currencies = get.currencies(str(message.author.id))
+
+        def refine_amount(currency):
+            if currency.currency_type == "MONEY":
+                return math.floor(currency.amount)
+
+            if currency.amount == 0:
+                return 0
+
+            exp = 10 ** max(0, 7 - math.ceil(math.log10(currency.amount)))
+            return math.floor(currency.amount * exp) / exp
+
+        currencies = [currency for currency in currencies if refine_amount(currency) > 0]
+
         if currencies == []:
             content = "돈이 없어"
 
         else:
-            def refine_amount(currency):
-                if currency.currency_type == "MONEY":
-                    return math.floor(currency.amount)
-
-                exp = 10 ** max(0, 7 - math.ceil(math.log10(currency.amount)))
-                return math.floor(currency.amount * exp) / exp
+            print([(c.amount, c.currency_type) for c in  currencies])
 
             content = (
                 ", ".join(
