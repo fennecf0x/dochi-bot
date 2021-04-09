@@ -340,12 +340,26 @@ class DochiBot(discord.Client):
                 Send(),
             ),
             Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StripWhitespaces(),
+                MatchRegex(r"<@!(\d+)>에게서(\d+)원몰수", 1, 2),
+                MapArgs(lambda c, m, k: {
+                    "amount": -float(k["groups"][1]),
+                    "user_id": int(k["groups"][0]),
+                }),
+                ChangeFinance(
+                    currency_type=CurrencyType.MONEY, incremental=True
+                ),
+                Args(content="몰수햇어"),
+                Send(),
+            ),
+            Command(
                 IsAdmin(),
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
                 ExactString("돈많이줘"),
                 ChangeFinance(
-                    currency_type=CurrencyType.MONEY, amount=100000, incremental=True
+                    currency_type=CurrencyType.MONEY, amount=30000, incremental=True
                 ),
                 Args(content="그랭"),
                 Send(),
