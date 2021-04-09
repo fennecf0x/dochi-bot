@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=/root/.cache/pip python -m pip install --user -r r
 # Uninstall tools for building only
 RUN apt-get remove -y --purge make gcc build-essential
 RUN apt-get autoremove -y
-RUN apt-get -y install pkg-config libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg gnuplot libpango1-dev
+RUN apt-get -y install pkg-config libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg gnuplot libatlas-base-dev libpango1-dev
 RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
