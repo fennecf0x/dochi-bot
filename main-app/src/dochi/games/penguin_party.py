@@ -3,7 +3,8 @@ import discord
 import random
 import os
 from datetime import datetime
-from typing import List, Literal, Optional, Tuple, Set, Union
+from typing import List, Optional, Tuple, Set, Union
+from typing_extensions import Literal
 from ..util import image
 
 

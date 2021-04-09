@@ -3,7 +3,7 @@ import discord
 import random
 import os
 from datetime import datetime
-from typing import List, Literal, Optional, Tuple
+from typing import List, Optional, Tuple
 from ..util import image
 
 

@@ -1,7 +1,8 @@
 from .game import SinglePlayerGame
 import discord
 import random
-from typing import List, Literal, Optional
+from typing import List, Optional
+from typing_extensions import Literal
 
 
 class FFLottery(SinglePlayerGame):

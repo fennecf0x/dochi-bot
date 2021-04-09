@@ -1,4 +1,5 @@
-from typing import TypedDict, Tuple, Literal, Union, Optional, cast
+from typing import TypedDict, Tuple, Union, Optional, cast
+from typing_extensions import Literal
 import asyncio
 import re
 import time
