@@ -1,4 +1,3 @@
-from typing import TypedDict
 import re
 import discord
 from .item import CommandItem

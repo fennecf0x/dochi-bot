@@ -1,4 +1,3 @@
-from typing import TypedDict, Optional
 import discord
 from .item import CommandItem
 from urllib.parse import unquote, urlparse
