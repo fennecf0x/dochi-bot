@@ -322,7 +322,7 @@ class DonateMoney(CommandItem):
             amount=max(receiver_currency + amount, 0),
         )
 
-        return kwargs
+        return {**kwargs, "content": "전달햇어"}
 
 
 class CheckWallet(CommandItem):
