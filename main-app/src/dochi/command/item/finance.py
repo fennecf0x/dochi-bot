@@ -352,7 +352,7 @@ class CheckWallet(CommandItem):
 
             content = (
                 ", ".join(
-                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {2}{'원' if currency.currency_type == 'MONEY' else '개'}"
+                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {print_currency(currency)}{'원' if currency.currency_type == 'MONEY' else '개'}"
                     for currency in currencies
                     if currency.amount > 0
                 )
