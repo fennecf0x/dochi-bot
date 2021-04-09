@@ -335,7 +335,7 @@ class DochiBot(discord.Client):
                 MapArgs(lambda c, m, k: {
                     "amount": float(k["groups"][1]),
                     "user_id": int(k["groups"][0]),
-                })
+                }),
                 ChangeFinance(
                     currency_type=CurrencyType.MONEY, incremental=True
                 ),
