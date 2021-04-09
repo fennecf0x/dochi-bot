@@ -25,7 +25,7 @@ class PenguinParty(MultiPlayerGame):
         self.prev_message: Optional[discord.Message] = None
         self.hand_messages: List[Optional[discord.Message]] = []
         self.board: List[int] = [0] * 36
-        self.hands: List[List[int]] = []
+        self.hands: List[List[int]] = [[None] * 5] * 6
         self.turn_index: int = 0
         self.surrendered_player_index: Set[int] = set()
 
@@ -131,7 +131,7 @@ class PenguinParty(MultiPlayerGame):
         self.turn_index = 0
         self.surrendered_player_index = set()
 
-    def get_scores(self): # -> Optional[dict[int, int]]:
+    def get_scores(self):  # -> Optional[dict[int, int]]:
         if self.is_finished:
             return dict(
                 [
