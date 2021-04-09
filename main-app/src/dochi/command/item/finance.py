@@ -247,7 +247,7 @@ class ChangeFinance(CommandItem):
         update.currency(
             str(message.author.id),
             currency_type=self.currency_type,
-            amount=base + self.amount,
+            amount=max(base + self.amount, 0),
         )
 
         return kwargs

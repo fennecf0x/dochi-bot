@@ -328,6 +328,28 @@ class DochiBot(discord.Client):
                 Send(),
             ),
             Command(
+                IsAdmin(),
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StripWhitespaces(),
+                ExactString("돈많이줘"),
+                ChangeFinance(
+                    currency_type=CurrencyType.MONEY, amount=100000, incremental=True
+                ),
+                Args(content="그랭"),
+                Send(),
+            ),
+            Command(
+                Negation(IsAdmin()),
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StripWhitespaces(),
+                ExactString("돈많이줘"),
+                ChangeFinance(
+                    currency_type=CurrencyType.MONEY, amount=-100, incremental=True
+                ),
+                Args(content="ㅅㄹ 뺏어갈거임"),
+                Send(),
+            ),
+            Command(
                 StartsWithDochi(),
                 StripWhitespaces(),
                 IsTransacting(),
