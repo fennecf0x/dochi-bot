@@ -2,6 +2,7 @@ import os
 import re
 import math
 import time
+import random
 from datetime import datetime, timedelta
 from threading import Thread
 
@@ -322,7 +323,7 @@ class DochiBot(discord.Client):
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 ExactString("돈줘"),
                 ChangeFinance(
-                    currency_type=CurrencyType.MONEY, amount=100, incremental=True
+                    currency_type=CurrencyType.MONEY, amount=random.randint(1, 1000), incremental=True
                 ),
                 Args(content="그랭"),
                 Send(),
