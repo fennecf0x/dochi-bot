@@ -80,6 +80,8 @@ class NotifyFFTripleTriad(CommandItem):
                 await game.hand_messages[1 - game.turn_index].delete()
 
         if game.get_winner() is not None:
+            await game.prev_message.delete()
+
             winner = game.get_winner()
             state.games.pop(game.id)
             return {
