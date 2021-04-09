@@ -281,7 +281,6 @@ class DonateMoney(CommandItem):
     ):
         currency_type = currency_type or self.currency_type
         amount = amount or self.amount
-        incremental = incremental or self.incremental
 
         base = 0
 
