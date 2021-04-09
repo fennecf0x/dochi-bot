@@ -159,6 +159,10 @@ class NotifyPenguinParty(CommandItem):
                 await game.hand_messages[turn_before].delete()
 
         if game.is_finished:
+            await game.prev_message.delete()
+            for hand_message in game.hand_messages:
+                await hand_message.delete()
+
             scores = game.get_scores()
             state.games.pop(game.id)
             return {
