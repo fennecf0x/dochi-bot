@@ -275,8 +275,8 @@ class DonateMoney(CommandItem):
         message: discord.Message,
         *,
         user_id: int,
-        currency_type: CurrencyType = CurrencyType.MONEY,
         amount: float,
+        currency_type: CurrencyType = CurrencyType.MONEY,
         **kwargs,
     ):
         currency_type = currency_type or self.currency_type
@@ -314,7 +314,9 @@ class DonateMoney(CommandItem):
             ),
             None,
         )
-        receiver_currency = receiver_currency.amount if receiver_currency is not None else 0
+        receiver_currency = (
+            receiver_currency.amount if receiver_currency is not None else 0
+        )
 
         update.currency(
             str(user_id),
@@ -335,10 +337,22 @@ class CheckWallet(CommandItem):
         currencies = get.currencies(str(message.author.id))
         if currencies == []:
             content = "돈이 없어"
+
         else:
+
+            def print_currency(currency):
+                exp = 10 ** max(0, 7 - math.ceil(math.log10(currency.amount)))
+                return np.format_float_positional(
+                    math.floor(currency.amount * exp) / exp,
+                    precision=max(0, 7 - math.ceil(math.log10(currency.amount)))
+                    if currency.currency_type != "MONEY"
+                    else 0,
+                    trim="-",
+                )
+
             content = (
                 ", ".join(
-                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {np.format_float_positional(currency.amount, precision=max(0, 7 - math.ceil( math.log10(currency.amount))) if currency.currency_type != 'MONEY' else 0, trim='-')}{'원' if currency.currency_type == 'MONEY' else '개'}"
+                    f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {2}{'원' if currency.currency_type == 'MONEY' else '개'}"
                     for currency in currencies
                     if currency.amount > 0
                 )
