@@ -18,7 +18,9 @@ from dochi.database import get, model, update
 from ..state import state
 from ..finance.coin_price import update_coin_params
 
-scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(job_defaults={
+    'max_instances': 3
+})
 
 
 def add_job(func, *, weeks=0, days=0, hours=0, minutes=0, seconds=0, now=True, **kwargs):
@@ -75,4 +77,7 @@ def decrease_likability():
 
 def update_coin_price_database():
     for currency_type in state.coin_params:
-        update_coin_params(currency_type, state.coin_params[currency_type])
+        try:
+            update_coin_params(currency_type, state.coin_params[currency_type])
+        except:
+            pass
