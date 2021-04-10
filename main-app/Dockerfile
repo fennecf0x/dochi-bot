@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:experimental
 # DOCKER_BUILDKIT=1 docker build -t dochi-bot-main-app .
 
-FROM python:3.7-slim
+FROM python:3.7-slim AS base
 
 # Install tools for building wheels
 RUN apt-get update
@@ -33,6 +33,8 @@ RUN apt-get remove -y --purge make gcc build-essential
 RUN apt-get autoremove -y
 RUN apt-get -y install pkg-config libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev
 RUN rm -rf /var/lib/apt/lists/*
+
+FROM base
 
 WORKDIR /app
 COPY ./src .
