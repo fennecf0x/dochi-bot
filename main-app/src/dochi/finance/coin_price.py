@@ -185,8 +185,8 @@ def update_price(
             max(
                 np.random.gamma(6)
                 * (coin_params.price - coin_params.ewma2)
-                * np.random.uniform(low=0.03, high=0.07),
-                coin_params.price * 0.1,
+                * np.random.gamma(shape=1, scale=2) / 200,
+                coin_params.price * 0.003,
             )
             / 20
         )
@@ -202,8 +202,8 @@ def update_price(
             max(
                 -np.random.gamma(6)
                 * (coin_params.price - coin_params.ewma2)
-                * np.random.uniform(low=0.03, high=0.07),
-                coin_params.price * 0.1,
+                * np.random.gamma(shape=1, scale=2) / 200,
+                coin_params.price * 0.003,
             )
             / 20
         )
