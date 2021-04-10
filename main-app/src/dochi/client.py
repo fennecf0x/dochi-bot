@@ -207,14 +207,14 @@ class DochiBot(discord.Client):
             ),
             Command(
                 StartsWithDochi(),
-                MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(나갈래|퇴장)$"),
+                MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(나갈래|퇴장|(안|그만)\s*할래)$"),
                 ExitPenguinParty(),
                 Send(),
             ),
             Command(
                 StartsWithDochi(),
                 MatchRegex(
-                    r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*((종료|취소)(할래)?|(안|그만)\s*할래)$"
+                    r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*((종료|취소)(할래)?)$"
                 ),
                 TerminatePenguinParty(),
                 Send(),
