@@ -120,10 +120,10 @@ def update_price(
             abs(np.random.normal()) * coin_constants.TIMER_INC_DEC_FACTOR * delta_t
         )
         coin_params.price += (
-            np.random.gamma(3)
+            np.random.gamma(1.5)
             * coin_params.price
             * np.random.uniform(low=0.05, high=0.09)
-            / 150
+            / 200
         )
 
     if coin_params.timer_dec_thres > 0:
