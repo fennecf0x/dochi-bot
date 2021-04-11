@@ -106,7 +106,14 @@ class AnalyzeEmotion(CommandItem):
 
         user_id = str(message.author.id)
 
-        likability = get.likability(user_id)
+        for i in range(5):
+            try:
+                likability = get.likability(user_id)
+                break
+            except:
+                pass
+        else:
+            return kwargs
 
         update.likability(
             user_id,
