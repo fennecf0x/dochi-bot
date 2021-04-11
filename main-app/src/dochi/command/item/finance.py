@@ -385,7 +385,7 @@ class IsCheckingCurrencyPrice(CommandItem):
         content: str,
         **kwargs,
     ):
-        pattern = rf"^(.*?)(((최근)?(가격|그래프|시세)|(가격|그래프|시세)최근)(((1?[1-9]|2[0-4])시간)|([1-9]|[1-5][0-9])분)|(최근)?(((1?[1-9]|2[0-4])시간)|([1-9]|[1-5][0-9])분)(가격|그래프|시세))(알려{줘})?$"
+        pattern = rf"^(.*?)(((최근)?(가격|그래프|시세)|(가격|그래프|시세)최근)?(((1?[1-9]|2[0-4])시간)|([1-9]|[1-5][0-9])분)?|(최근)?(((1?[1-9]|2[0-4])시간)|([1-9]|[1-5][0-9])분)?(가격|그래프|시세)?)(알려{줘})?$"
         match = re.match(pattern, content)
 
         if match is None:
@@ -402,8 +402,11 @@ class IsCheckingCurrencyPrice(CommandItem):
         if (hours_1 or hours_2) is not None:
             minutes = 60 * int(hours_1 or hours_2)
 
-        if (minutes_1 or minutes_2) is not None:
+        elif (minutes_1 or minutes_2) is not None:
             minutes = int(minutes_1 or minutes_2)
+
+        else:
+            minutes = 60
 
         print(currency_type, minutes)
 
