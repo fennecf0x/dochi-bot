@@ -78,8 +78,8 @@ coin_constants = {
         "EWMA_HIGH_THRES_HIGH": 1.8,
         "EWMA_LOW_THRES_LOW": 0.84,
         "EWMA_LOW_THRES_HIGH": 0.92,
-        "ALPHA1": 0.00009,
-        "ALPHA2": 0.000018,
+        "ALPHA1": 0.00021,
+        "ALPHA2": 0.00004,
     })
 }
 
