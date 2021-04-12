@@ -34,6 +34,8 @@ coin_constants = {
         "EWMA_LOW_THRES_HIGH": 0.85,
         "ALPHA1": 0.00011,
         "ALPHA2": 0.00002,
+        # to show figure
+        "COLORS": ["#4899E7", "#9C7EC4"],
     }),
     CurrencyType.AYACHISAAYA: DictX({
         "BASE_PRICE": 2872,
@@ -57,6 +59,8 @@ coin_constants = {
         "EWMA_LOW_THRES_HIGH": 0.89,
         "ALPHA1": 0.00009,
         "ALPHA2": 0.000018,
+
+        "COLORS": ["#E895A9", "#EBD4BB"],
     }),
     CurrencyType.ROOT_COIN: DictX({
         "BASE_PRICE": 14812,
@@ -80,6 +84,8 @@ coin_constants = {
         "EWMA_LOW_THRES_HIGH": 0.92,
         "ALPHA1": 0.00021,
         "ALPHA2": 0.00004,
+
+        "COLORS": ["#F6BF6F", "#FEC926"],
     })
 }
 

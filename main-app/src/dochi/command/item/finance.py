@@ -2,6 +2,7 @@ from typing import Tuple, Union, Optional, cast
 from typing_extensions import TypedDict, Literal
 import asyncio
 import re
+import os
 import time
 import tempfile
 import math
@@ -437,16 +438,27 @@ class CheckCurrencyPrice(CommandItem):
             and currency_record.timestamp > timestamp - 60 * minutes
         ]
 
+        g = gnuplot.Gnuplot(log=True)
+        timestamps = [-round(r[0]) / 60 for r in currency_records]
+        prices = [r[1] for r in currency_records]
+
+        if timestamps == [] or prices == []:
+            return {**kwargs, "content": "데이터가 없어!"}
+
         with tempfile.NamedTemporaryFile(suffix=".png") as temp_png:
-            g = gnuplot.Gnuplot(log=True)
-
-            timestamps = [-round(r[0]) / 60 for r in currency_records]
-            prices = [r[1] for r in currency_records]
-
             df = pd.DataFrame(data={"prices": prices}, index=timestamps)
+            g.set(
+                "palette defined (" + \
+                ", ".join(
+                    f"{i + 1} '{color}'" 
+                    for (i, color)
+                    in enumerate(state.coin_constants[currency_type].COLORS)
+                ) + ")"
+            )
+            g.unset("colorbox")
             g.plot_data(
                 df,
-                'using 1:2 with line lw 2 lc "web-blue"',
+                'using 1:2:1 with line lw 2 lc palette',
                 term="pngcairo size 720,480",
                 out='"' + temp_png.name + '"',
                 title=f'"{currency_type_ko(currency_type)} 최근 {minutes}분 그래프"',
@@ -457,16 +469,15 @@ class CheckCurrencyPrice(CommandItem):
                 origin="0, 0",
             )
 
-            await asyncio.sleep(0.7)
-
-            count = 5
+            count = 10
             while count > 0:
-                try:
+                print(count, os.stat(temp_png.name).st_size)
+                if os.stat(temp_png.name).st_size == 0:
+                    count -= 1
+                    await asyncio.sleep(0.3)
+                else:
                     await message.channel.send(file=discord.File(temp_png.name))
                     count = 0
-                except:
-                    count -= 1
-                    await asyncio.sleep(0.5)
 
         # do not proceed afterward
         return {**kwargs, "is_satisfied": False}
