@@ -57,7 +57,7 @@ coin_constants = {
         "EWMA_LOW_THRES_HIGH": 0.89,
         "ALPHA1": 0.00009,
         "ALPHA2": 0.000018,
-    })
+    }),
     CurrencyType.ROOT_COIN: DictX({
         "BASE_PRICE": 14812,
         "TIME_SLICE_LOW": 8,
