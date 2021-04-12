@@ -431,15 +431,18 @@ class DochiBot(discord.Client):
 
         def run_update_price_thread(currency_type):
             while True:
-                update_price(
-                    state.coin_constants[currency_type],
-                    state.coin_params[currency_type],
-                )
-                update.currency_price_record(
-                    currency_type,
-                    timestamp=time.time(),
-                    price=state.coin_params[currency_type].price,
-                )
+                try:
+                    update_price(
+                        state.coin_constants[currency_type],
+                        state.coin_params[currency_type],
+                    )
+                    update.currency_price_record(
+                        currency_type,
+                        timestamp=time.time(),
+                        price=state.coin_params[currency_type].price,
+                    )
+                except Exception as e:
+                    print("run_update_price_thread gave an error", e)
 
         # add coin price updater
         for currency_type in state.coin_constants:

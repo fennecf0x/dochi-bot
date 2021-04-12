@@ -69,7 +69,7 @@ class NotifyFFTripleTriad(CommandItem):
         game: FFTripleTriad = state.games[(True, message.channel.id)]
         if game.__class__.__name__ != "FFTripleTriad":
             if "notify" in kwargs and kwargs["notify"]:
-                return kwargs
+                return {**kwargs, "notify": True}
             return {**kwargs, "is_satisfied": False}
 
         if "notify" in kwargs and not kwargs["notify"]:
@@ -237,6 +237,9 @@ class ProcessOptionsFFTripleTriad(CommandItem):
             return {**kwargs, "is_satisfied": False}
 
         if message.author.id not in game.player_ids:
+            return {**kwargs, "is_satisfied": False}
+
+        if "notify" in kwargs and kwargs["notify"]:
             return {**kwargs, "is_satisfied": False}
 
         pattern = r"(동수|합산|순서대로|랜덤순서|랜덤)(ㅇ|ㄴ)?(,|\.)?"
