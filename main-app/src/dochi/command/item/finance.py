@@ -476,8 +476,15 @@ class CheckCurrencyPrice(CommandItem):
                     count -= 1
                     await asyncio.sleep(0.3)
                 else:
-                    await message.channel.send(file=discord.File(temp_png.name))
-                    count = 0
+                    size = os.stat(temp_png.name).st_size
+                    await asyncio.sleep(0.7)
+                    if os.stat(temp_png.name).st_size == size:
+                        await message.channel.send(file=discord.File(temp_png.name))
+                        count = 0
+                    else:
+                        await asyncio.sleep(0.3)
+                        count += 1
+
 
         # do not proceed afterward
         return {**kwargs, "is_satisfied": False}
