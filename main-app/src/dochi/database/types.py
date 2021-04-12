@@ -34,11 +34,11 @@ def currency_type_ko(currency_type: CurrencyType) -> str:
 def currency_name_type(currency_name: str) -> Optional[CurrencyType]:
     if currency_name in ["MONEY", "돈"]:
         return CurrencyType.MONEY
-    if currency_name in ["DOCHI_COIN", "도치코인"]:
+    if currency_name in ["DOCHI_COIN", "도치코인", "코인"]:
         return CurrencyType.DOCHI_COIN
     if currency_name in ["HONEYWORKS_CASH", "허니웍스캐시"]:
         return CurrencyType.HONEYWORKS_CASH
-    if currency_name in ["AYACHISAAYA", "아야치사아야"]:
+    if currency_name in ["AYACHISAAYA", "아야치사아야", "아야치사", "치사아야"]:
         return CurrencyType.AYACHISAAYA
     if currency_name in ["YEONOO_COIN", "연오코인"]:
         return CurrencyType.YEONOO_COIN
