@@ -508,5 +508,5 @@ class DochiBot(discord.Client):
                 await self.likability_update_commands(self, message)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if after.id == os.environ.get("ADMIN_ID") and after.nick != state.my_nick:
+        if after.id == int(os.environ.get("ADMIN_ID")) and after.nick != state.my_nick:
             await after.edit(nick=state.my_nick)
