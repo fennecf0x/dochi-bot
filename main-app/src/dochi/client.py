@@ -486,7 +486,7 @@ class DochiBot(discord.Client):
             message.guild.id
             not in [
                 int(guild_id)
-                for guild_id in os.environ.get("GUILD_ID_LIST", []).split(",")
+                for guild_id in os.environ.get("GUILD_ID_LIST", "").split(",")
             ]
         ):
             return
@@ -508,6 +508,5 @@ class DochiBot(discord.Client):
                 await self.likability_update_commands(self, message)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        # TODO: replace hardcoded ids
-        if after.id == 455782902173532162 and after.nick != state.my_nick:
+        if after.id == os.environ.get("ADMIN_ID") and after.nick != state.my_nick:
             await after.edit(nick=state.my_nick)

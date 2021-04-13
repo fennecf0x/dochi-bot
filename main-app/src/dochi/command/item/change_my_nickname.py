@@ -20,6 +20,5 @@ class ChangeMyNickname(CommandItem):
 
         state.my_nick = nickname
 
-        # TODO: hardcoded id
-        me = message.guild.get_member(455782902173532162)
+        me = message.guild.get_member(os.environ.get("ADMIN_ID"))
         await me.edit(nick=nickname)

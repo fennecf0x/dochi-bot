@@ -356,7 +356,7 @@ class FFTripleTriad(MultiPlayerGame):
             x="{12 + 268 * row}"
             y="{12 + 268 * column}"
             width="256" height="256"
-            xlink:href="{image.png_to_base64(os.environ['ASSETS_PATH'] + '/ff_tt/' + basename + '.png')}"
+            xlink:href="{image.png_to_base64(os.environ.get('ASSETS_PATH', '') + '/ff_tt/' + basename + '.png')}"
         />
         """
 

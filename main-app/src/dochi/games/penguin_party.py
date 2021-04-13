@@ -226,7 +226,7 @@ class PenguinParty(MultiPlayerGame):
             x="{12 + (96 + 12) * ((level / 2 if indent else 0) + offset)}"
             y="{12 + (96 + 12) * (max_level - level)}"
             width="96" height="96"
-            xlink:href="{image.png_to_base64(os.environ['ASSETS_PATH'] + '/penguin_party/' + PenguinParty.COLORS[color] + '.png')}"
+            xlink:href="{image.png_to_base64(os.environ.get('ASSETS_PATH', '') + '/penguin_party/' + PenguinParty.COLORS[color] + '.png')}"
         />
         """
 

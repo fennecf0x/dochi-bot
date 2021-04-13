@@ -5,7 +5,7 @@ import pickle
 
 
 def save_pickle(obj, p, name):
-    filename = path.join(os.environ["CACHE_PATH"], p, name + '.pkl')
+    filename = path.join(os.environ.get('CACHE_PATH', ''), p, name + '.pkl')
     if not path.exists(path.dirname(filename)):
         try:
             makedirs(path.dirname(filename))
@@ -18,5 +18,5 @@ def save_pickle(obj, p, name):
 
 
 def load_pickle(p, name):
-    with open(path.join(os.environ["CACHE_PATH"], p, name + '.pkl'), 'rb') as f:
+    with open(path.join(os.environ.get('CACHE_PATH', ''), p, name + '.pkl'), 'rb') as f:
         return pickle.load(f)

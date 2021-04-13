@@ -66,7 +66,7 @@ def search_google(query, N=40):
         print("e1", e1)
         try:
             url = lambda i: (
-                f"https://www.googleapis.com/customsearch/v1?key={os.environ['GOOGLE_SEARCH_KEY']}&"
+                f"https://www.googleapis.com/customsearch/v1?key={os.environ.get('GOOGLE_SEARCH_KEY', '')}&"
                 f"cx=1d4d01f2dd7fc7179&searchType=image&q={query}&start={10 * i + 1}"
             )
 

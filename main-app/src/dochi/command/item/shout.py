@@ -65,7 +65,7 @@ class Shout(CommandItem):
                 data=f"""<speak><prosody rate="slow"><voice name="WOMAN_READ_CALM">{content}</voice></prosody></speak>""",
                 headers={
                     "Content-Type": "application/xml",
-                    "Authorization": f"KakaoAK {os.environ['KAKAO_API_KEY']}",
+                    "Authorization": f"KakaoAK {os.environ.get('KAKAO_API_KEY', '')}",
                 },
             ) as resp:
                 print("voice synt", resp.status)

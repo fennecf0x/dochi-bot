@@ -94,7 +94,7 @@ class Send(CommandItem):
                 else:
                     prev_message = await message.channel.send(content=content, file=discord.File(url))
             except Exception as e:
-                # TODO: send file failed
+                # send file failed
                 prev_message = None
                 print("send file failed", e)
                 pass
@@ -113,7 +113,7 @@ class Send(CommandItem):
                     file=discord.File(fp=buffer, filename=basename)
 
         except Exception as e:
-            # TODO: fetch file failed
+            # fetch file failed
             print("fetch file failed", e)
             file = None
             pass
@@ -126,7 +126,7 @@ class Send(CommandItem):
             else:
                 prev_message = await message.channel.send(content=content, file=file)
         except Exception as e:
-            # TODO: send file failed
+            # send file failed
             prev_message = None
             print("send file failed", e)
             pass

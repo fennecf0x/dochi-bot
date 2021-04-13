@@ -15,8 +15,14 @@ class Invite(CommandItem):
         return the invitation link.
         """
 
-        MAIN_GUILD_ID = 477523958816833546
-        channel = client.get_guild(MAIN_GUILD_ID).text_channels[0]
+        guild_id_list = [
+            int(guild_id)
+            for guild_id in os.environ.get("GUILD_ID_LIST", "").split(",")
+        ]
+        if guild_id_list == []:
+            return {**kwargs, "is_satisfied": False}
+
+        channel = client.get_guild(guild_id_list[0]).text_channels[0]
         link = await channel.create_invite(max_age = 300)
 
         return {**kwargs, "link": link}
