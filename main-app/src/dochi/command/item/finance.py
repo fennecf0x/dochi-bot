@@ -469,7 +469,7 @@ class CheckCurrencyPrice(CommandItem):
                 origin="0, 0",
             )
 
-            count = 10
+            count = 50
             while count > 0:
                 print(count, os.stat(temp_png.name).st_size)
                 if os.stat(temp_png.name).st_size == 0:
