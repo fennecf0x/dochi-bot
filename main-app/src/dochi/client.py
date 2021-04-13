@@ -311,6 +311,13 @@ class DochiBot(discord.Client):
             ChangeNickname(),
         )
 
+        mynick_command = Command(
+            IsAdmin(),
+            MatchRegex(r"^\/mynick\s*(.*?)$", 1),
+            MapArgs(lambda c, m, k: {"nickname": k["groups"]}),
+            ChangeMyNickname(),
+        )
+
         finance_commands = CommandGroup(
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
@@ -419,6 +426,7 @@ class DochiBot(discord.Client):
             pi_command,
             search_image_command,
             dotnick_command,
+            mynick_command,
             shout_command,
             finance_commands,
             ff_lottery_commands,
@@ -498,3 +506,8 @@ class DochiBot(discord.Client):
             ignore_likability_update = await self.group(self, message)
             if not ignore_likability_update:
                 await self.likability_update_commands(self, message)
+
+    async def on_member_update(before: discord.Member, after: discord.Member):
+        # TODO: replace hardcoded ids
+        if after.id == 455782902173532162 and after.nick != state.my_nick:
+            await after.edit(nick=state.my_nick)

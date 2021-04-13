@@ -97,6 +97,7 @@ class State:
     games: dict #[Tuple[bool, str, int], Game]
     coin_constants: dict  # dict[CurrencyType, CoinPriceConstants]
     coin_params: dict  # dict[CurrencyType, CoinPriceParams]
+    my_nick: str
 
 
 state: State = cast(State, DictX({
@@ -106,4 +107,5 @@ state: State = cast(State, DictX({
     "games": {},
     "coin_constants": coin_constants,
     "coin_params": DictX({}),
+    "my_nick": "카누",
 }))
