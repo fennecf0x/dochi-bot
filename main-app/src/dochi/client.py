@@ -507,7 +507,7 @@ class DochiBot(discord.Client):
             if not ignore_likability_update:
                 await self.likability_update_commands(self, message)
 
-    async def on_member_update(before: discord.Member, after: discord.Member):
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
         # TODO: replace hardcoded ids
         if after.id == 455782902173532162 and after.nick != state.my_nick:
             await after.edit(nick=state.my_nick)
