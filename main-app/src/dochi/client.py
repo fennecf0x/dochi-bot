@@ -219,16 +219,6 @@ class DochiBot(discord.Client):
                 TerminatePenguinParty(),
                 Send(),
             ),
-            # Command(
-            #     OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
-            #     MatchRegex(
-            #         r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*(옵션|설정)?\s*(.*?)$", 4
-            #     ),
-            #     MapArgs({"groups": "content"}),
-            #     StripWhitespaces(),
-            #     ProcessOptionsFFTripleTriad(),
-            #     Send(),
-            # ),
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 OneOf(
@@ -473,7 +463,6 @@ class DochiBot(discord.Client):
             thread.start()
             coin_threads[currency_type] = thread
 
-        await self.change_presence(status=discord.Status.offline)
         print("Logged on as", self.user)
 
     async def on_message(self, message: discord.Message):
@@ -508,5 +497,8 @@ class DochiBot(discord.Client):
                 await self.likability_update_commands(self, message)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if after.id == int(os.environ.get("ADMIN_ID")) and after.nick != state.my_nick:
-            await after.edit(nick=state.my_nick)
+        try:
+            if after.id == int(os.environ.get("ADMIN_ID")) and after.nick != state.my_nick:
+                await after.edit(nick=state.my_nick)
+        except:
+            pass
