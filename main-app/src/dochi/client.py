@@ -407,6 +407,15 @@ class DochiBot(discord.Client):
             Shout(),
         )
 
+        test_commands = CommandGroup(
+            Command(
+                StartsWithDochi(),
+                ExactString("버전"),
+                Args(content=os.environ.get("COMMIT", "UNKNOWN")),
+                Send(),
+            ),
+        )
+
         self.group: CommandGroup = CommandGroup(
             invitation_command,
             random_selection_commands,
@@ -422,6 +431,7 @@ class DochiBot(discord.Client):
             ff_lottery_commands,
             ff_tt_commands,
             penguin_party_commands,
+            test_commands,
         )
 
     async def on_ready(self):

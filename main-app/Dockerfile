@@ -40,6 +40,7 @@ COPY ./src .
 ENV PATH=/root/.local:/root/.local/lib:/root/.local/lib/python3.7:/root/.local/lib/python3.7/site-packages:$PATH
 ENV PYTHONPATH=/app:$PATH
 ENV AM_I_IN_A_DOCKER_CONTAINER=true
+ENV COMMIT=$(git rev-parse --short HEAD)
 
 
 CMD ["python3.7", "main.py"]
