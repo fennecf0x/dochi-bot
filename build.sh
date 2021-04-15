@@ -1,4 +1,4 @@
-DOCKER_BUILDKIT=1 docker build -t dochi-bot-main-app "$(pwd)"/main-app
+DOCKER_BUILDKIT=1 docker build --build-arg=COMMIT=$(git rev-parse --short HEAD) -t dochi-bot-main-app "$(pwd)"/main-app
 
 docker rename dochi-bot-main-app dochi-bot-main-app-old
 
