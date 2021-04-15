@@ -27,5 +27,7 @@ py-gnuplot==1.1.7
 APScheduler==3.7.0
 
 # images
+https://www.piwheels.org/simple/typed-ast/typed_ast-1.4.3-cp37-cp37m-linux_armv7l.whl#sha256=6cd1c6665796c58380121c2dd3e6abef605a3ae1116b95cfc585370ebfefdd5c # typed-ast (dependency)
+https://www.piwheels.org/simple/cairocffi/cairocffi-1.2.0-py3-none-any.whl#sha256=c7f0e9441aed0421ca1a848013ee3ee1fe3696f63d64c9d000a43d31d0ec4105 # cairocffi (dependency)
 https://www.piwheels.org/simple/cairosvg/CairoSVG-2.5.2-py3-none-any.whl#sha256=98c276b7e4f0caf01e5c7176765c104ffa1aa1461d63b2053b04ab663cf7052b # cairosvg
 https://www.piwheels.org/simple/pillow/Pillow-8.2.0-cp37-cp37m-linux_armv7l.whl#sha256=3da86987a323708512d4d35939b29854286ad88940ee10f2eac48bfec9dba678 # pillow
