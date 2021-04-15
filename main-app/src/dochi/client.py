@@ -508,7 +508,7 @@ class DochiBot(discord.Client):
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         try:
-            if after.id == int(os.environ.get("ADMIN_ID")) and after.nick != state.my_nick:
+            if after.id == int(os.environ.get("ADMIN_ID", 0)) and after.nick != state.my_nick:
                 await after.edit(nick=state.my_nick)
         except:
             pass
