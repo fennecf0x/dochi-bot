@@ -94,7 +94,10 @@ class FFTripleTriad(MultiPlayerGame):
             return False
 
         if self.options["순서대로"] or self.options["랜덤순서"]:
-            move = (6 - len([hand for hand in self.hands[player] if hand is None]), move[1])
+            move = (
+                6 - len([hand for hand in self.hands[player] if hand is None]),
+                move[1],
+            )
 
         card_name = self.hands[player][move[0] - 1]
         if card_name is None:
@@ -351,59 +354,81 @@ class FFTripleTriad(MultiPlayerGame):
 
     @staticmethod
     def insert_image(basename: str, column: int, row: int) -> str:
-        return f"""
-        <image
-            x="{12 + 268 * row}"
-            y="{12 + 268 * column}"
-            width="256" height="256"
-            xlink:href="{image.to_base64(os.environ.get('ASSETS_PATH', '') + '/ff_tt/' + basename + '.png')}"
-        />
-        """
+        return image.use_image(
+            os.environ.get("ASSETS_PATH", "") + "/ff_tt/" + basename + ".png",
+            tx=12 + 268 * row,
+            ty=12 + 268 * column,
+        )
 
     def print_hand(self, index: int) -> str:
         hand = self.hands[index]
-        gen_path = (
-            lambda i: f"""
-            <path d="M 28 12 L 252 12 C 260.831 12 268 19.169 268 28 L 268 252 C 268 260.831 260.831 268 252 268 L 28 268 C 19.169 268 12 260.831 12 252 L 12 28 C 12 19.169 19.169 12 28 12 Z" transform="matrix(1,0,0,1,{268 * i},72)" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />
-            """
+        gen_path = lambda i: (
+            f"""<path d="{image.get_rounded_square_path(256, 256, 16, cx=140 + 268 * i, cy=224)}" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />"""
         )
         gen_text = lambda i: (
             f"""
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1;stroke:#4d4d4d;stroke-width:12px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},64)">{i + 1}</text>
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},64)">{i + 1}</text>
+            <text style='font-family:Noto Sans CJK KR;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1;stroke:#4d4d4d;stroke-width:12px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},32)">{i + 1}</text>
+            <text style='font-family:Noto Sans CJK KR;font-size:64px;font-style:normal;fill:#fff;fill-opacity:1' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{140 + i * 268},32)">{i + 1}</text>
             """
         )
-        return f"""
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 1352 350" width="1352px" height="350px">
-            <g>
-                {"".join(gen_text(i) for i in range(5))}
-                {"".join(gen_path(i) for i in range(5) if hand[i] is None)}
-                {"".join(FFTripleTriad.insert_image(
-                    FFTripleTriad.tile_to_str((hand[i], index)), 72 / 268, i
-                ) for i in range(5) if hand[i] is not None)}
-            </g>
-        </svg>
-        """
+        return image.render_svg(
+            1352,
+            350,
+            defs=[
+                image.get_image_def(
+                    os.environ.get("ASSETS_PATH", "")
+                    + "/ff_tt/"
+                    + FFTripleTriad.tile_to_str((hand[i], index))
+                    + ".png"
+                )
+                for i in range(5)
+                if hand[i] is not None
+            ],
+            inner=[
+                *[gen_text(i) for i in range(5)],
+                *[gen_path(i) for i in range(5) if hand[i] is None],
+                *[
+                    FFTripleTriad.insert_image(
+                        FFTripleTriad.tile_to_str((hand[i], index)), 72 / 268, i
+                    )
+                    for i in range(5)
+                    if hand[i] is not None
+                ],
+            ],
+        )
 
     def print_board(self) -> str:
-        gen_path = (
-            lambda i: f"""
-            <path d="M 28 12 L 252 12 C 260.831 12 268 19.169 268 28 L 268 252 C 268 260.831 260.831 268 252 268 L 28 268 C 19.169 268 12 260.831 12 252 L 12 28 C 12 19.169 19.169 12 28 12 Z" transform="matrix(1,0,0,1,{268 * (i % 3)},{268 * (i // 3)})" style="stroke:none;fill:{'url(#' + self.board[i] + ')' if  self.board[i] is not None  else '#EBEBEB'};stroke-miterlimit:10;" />
-            """
+        gen_path = lambda i: (
+            f"""<path d="{image.get_rounded_square_path(256, 256, 16, cx=140 + 268 * (i % 3), cy=140 + 268 * (i // 3))}" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />"""
         )
         gen_text = (
             lambda i: f"""
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:72px;font-style:normal;fill:#373737;stroke:none;' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{268 * (i % 3) + 140},{268 * (i // 3) + 166})">{chr(65 + i)}</text>
+            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-size:72px;font-style:normal;fill:#373737;stroke:none;' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{268 * (i % 3) + 140},{268 * (i // 3) + 140 - 4})">{chr(65 + i)}</text>
             """
         )
-        return f"""
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 816 816" width="816px" height="816px">
-            <g>
-                {"".join(gen_path(i) for i in range(9) if self.board[i] is None)}
-                {"".join(gen_text(i) for i in range(9) if self.board[i] is None)}
-                {"".join(FFTripleTriad.insert_image(
-                    FFTripleTriad.tile_to_str(tile), i // 3, i % 3
-                ) for (i, tile) in enumerate(self.board) if tile is not None)}
-            </g>
-        </svg>
-        """
+
+        return image.render_svg(
+            816,
+            816,
+            defs=[
+                image.get_image_def(
+                    os.environ.get("ASSETS_PATH", "")
+                    + "/ff_tt/"
+                    + FFTripleTriad.tile_to_str(self.board)
+                    + ".png"
+                )
+                for i in range(9)
+                if self.board[i] is not None
+            ],
+            inner=[
+                *[gen_path(i) for i in range(9) if self.board[i] is None],
+                *[gen_text(i) for i in range(9) if self.board[i] is None],
+                *[
+                    FFTripleTriad.insert_image(
+                        FFTripleTriad.tile_to_str(tile), i // 3, i % 3
+                    )
+                    for (i, tile) in enumerate(self.board)
+                    if tile is not None
+                ],
+            ],
+        )

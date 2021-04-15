@@ -288,7 +288,7 @@ class PenguinParty(MultiPlayerGame):
 
         gen_text = (
             lambda i, level, offset, max_level: f"""
-            <text style="font-family:Noto Sans CJK KR;font-weight:600;font-size:36px;font-style:normal;fill:#373737;stroke:none;" dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{
+            <text style="font-family:Noto Sans CJK KR;font-size:36px;font-style:normal;fill:#373737;stroke:none;" dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{
                 60 + (96 + 12) * (level / 2 + offset)
             },{
                 60 + (96 + 12) * (max_level - level) - 4
@@ -307,12 +307,14 @@ class PenguinParty(MultiPlayerGame):
                     if level != -1
                     else gen_path(0, -1, max_level)
                     for (level, offset) in self.available_poses()
+                    if not self.is_finished
                 ],
                 *[
                     gen_text(i, level, offset, max_level)
                     if level != -1
                     else gen_text(i, 0, -1, max_level)
                     for (i, (level, offset)) in enumerate(self.available_poses())
+                    if not self.is_finished
                 ],
                 *[
                     PenguinParty.insert_image(
