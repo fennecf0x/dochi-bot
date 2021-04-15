@@ -78,7 +78,6 @@ class PenguinParty(MultiPlayerGame):
 
         poses = self.available_poses()
         colors = set(self.hands[player_index])
-        print("colors", list(colors))
 
         result = []
 
@@ -101,7 +100,6 @@ class PenguinParty(MultiPlayerGame):
                     ]
                 )
 
-        print("available_moves > result", result)
         return result
 
     def on_start(self):
@@ -188,15 +186,12 @@ class PenguinParty(MultiPlayerGame):
         has_no_moves = [
             self.available_moves(i) == [] for i in range(len(self.player_ids))
         ]
-        print("has_no_moves", has_no_moves)
 
         # repeat the following:
         while True:
             # change the turn
             self.turn_index += 1
             self.turn_index %= len(self.player_ids)
-
-            print(self.turn_index)
 
             # if everyone is surrendered, terminate
             if len(self.surrendered_player_index) == len(self.player_ids):
@@ -221,44 +216,45 @@ class PenguinParty(MultiPlayerGame):
     def insert_image(
         color: int, level: int, offset: int, max_level: int = 7, indent: bool = True
     ) -> str:
-        return f"""
-        <image
-            x="{12 + (96 + 12) * ((level / 2 if indent else 0) + offset)}"
-            y="{12 + (96 + 12) * (max_level - level)}"
-            width="96" height="96"
-            xlink:href="{image.png_to_base64(os.environ.get('ASSETS_PATH', '') + '/penguin_party/' + PenguinParty.COLORS[color] + '.png')}"
-        />
-        """
+        return image.use_image(
+            f"{os.environ.get('ASSETS_PATH', '')}/penguin_party/{PenguinParty.COLORS[color]}.png",
+            width=96,
+            height=96,
+            tx=12 + (96 + 12) * ((level / 2 if indent else 0) + offset),
+            ty=12 + (96 + 12) * (max_level - level),
+        )
 
     def print_hand(self, index: int) -> str:
         hand = self.hands[index]
+        image_paths = set(
+            [
+                f"{os.environ.get('ASSETS_PATH', '')}/penguin_party/{PenguinParty.COLORS[color]}.png"
+                for color in hand
+            ]
+        )
 
-        return f"""
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 {12 + (96 + 12) * ((len(hand) + 1) // 2)} {12 + (96 + 12) * 2}" width="{12 + (96 + 12) * ((len(hand) + 1) // 2)}px" height="{12 + (96 + 12) * 2}px">
-            <g>
-                {"".join(PenguinParty.insert_image(t, 1 if i % 2 == 0 else 0, i // 2, max_level=1, indent=False) for (i, t) in enumerate(hand))}
-            </g>
-        </svg>
-        """
+        width = 12 + (96 + 12) * ((len(hand) + 1) // 2)
+        height = 12 + (96 + 12) * 2
+
+        return image.render_svg(
+            width,
+            height,
+            defs=[image.get_image_def(path) for path in image_paths],
+            inner=[
+                PenguinParty.insert_image(
+                    t, 1 if i % 2 == 0 else 0, i // 2, max_level=1, indent=False
+                )
+                for (i, t) in enumerate(hand)
+            ],
+        )
 
     def print_board(self) -> str:
-        gen_path = (
-            lambda level, offset, max_level: f"""
-            <path d="M 6 0 L 90 0 C 93.311 0 96 2.689 96 6 L 96 90 C 96 93.311 93.311 96 90 96 L 6 96 C 2.689 96 0 93.311 0 90 L 0 6 C 0 2.689 2.689 0 6 0 Z" transform="matrix(1,0,0,1,{
-                12 + (96 + 12) * (level / 2 + offset)
-            },{
-                12 + (96 + 12) * (max_level - level)
-            })" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />
-            """
-        )
-        gen_text = (
-            lambda i, level, offset, max_level: f"""
-            <text xmlns="http://www.w3.org/2000/svg" style='font-family:Noto Sans CJK KR;font-weight:600;font-size:36px;font-style:normal;fill:#373737;stroke:none;' dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{
-                12 + (96 + 12) * (level / 2 + offset) + 48
-            },{
-                12 + (96 + 12) * (max_level - level) + 60
-            })">{i + 1}</text>
-            """
+        image_paths = set(
+            [
+                f"{os.environ.get('ASSETS_PATH', '')}/penguin_party/{PenguinParty.COLORS[color]}.png"
+                for color in self.board
+                if color != 0
+            ]
         )
 
         available_poses = self.available_poses()
@@ -278,21 +274,54 @@ class PenguinParty(MultiPlayerGame):
         else:
             width = max(width_list) + 1
 
-        return f"""
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="{-(96 + 12) * offset_offset} 0 {12 + (96 + 12) * (width + offset_offset)} {12 + (96 + 12) * (max_level + 1)}" width="{12 + (96 + 12) * (width + offset_offset)}px" height="{12 + (96 + 12) * (max_level + 1)}px">
-        <g>
-        {"".join(
-            gen_path(level, offset, max_level) if level != -1 else gen_path(0, -1, max_level) for (level, offset) in self.available_poses()
-        )}
-        {"".join(
-            gen_text(i, level, offset, max_level) if level != -1 else gen_text(i, 0, -1, max_level) for (i, (level, offset)) in enumerate(self.available_poses())
-        )}
-        {"".join(
-            PenguinParty.insert_image(self.board[index], level, offset, max_level)
-            for (index, (level, offset)) 
-            in enumerate([PenguinParty.index_to_pos(index) for index in range(36)])
-            if self.board[index] != 0
-        )}
-        </g>
-        </svg>
-        """
+        gen_path = lambda level, offset, max_level: (
+            f"""<path d="{
+                image.get_rounded_square_path(
+                    96,
+                    96,
+                    6,
+                    60 + (96 + 12) * (level / 2 + offset),
+                    60 + (96 + 12) * (max_level - level),
+                )
+            }" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />"""
+        )
+
+        gen_text = (
+            lambda i, level, offset, max_level: f"""
+            <text style="font-family:Noto Sans CJK KR;font-weight:600;font-size:36px;font-style:normal;fill:#373737;stroke:none;" dominant-baseline="middle" text-anchor="middle" transform="matrix(1,0,0,1,{
+                60 + (96 + 12) * (level / 2 + offset)
+            },{
+                60 + (96 + 12) * (max_level - level) - 4
+            })">{i + 1}</text>
+            """
+        )
+
+        return image.render_svg(
+            12 + (96 + 12) * (width + offset_offset),
+            12 + (96 + 12) * (max_level + 1),
+            min_x=-(96 + 12) * offset_offset,
+            defs=[image.get_image_def(path) for path in image_paths],
+            inner=[
+                *[
+                    gen_path(level, offset, max_level)
+                    if level != -1
+                    else gen_path(0, -1, max_level)
+                    for (level, offset) in self.available_poses()
+                ],
+                *[
+                    gen_text(i, level, offset, max_level)
+                    if level != -1
+                    else gen_text(i, 0, -1, max_level)
+                    for (i, (level, offset)) in enumerate(self.available_poses())
+                ],
+                *[
+                    PenguinParty.insert_image(
+                        self.board[index], level, offset, max_level
+                    )
+                    for (index, (level, offset)) in enumerate(
+                        [PenguinParty.index_to_pos(index) for index in range(36)]
+                    )
+                    if self.board[index] != 0
+                ],
+            ],
+        )

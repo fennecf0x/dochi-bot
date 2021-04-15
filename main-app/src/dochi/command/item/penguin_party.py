@@ -224,8 +224,6 @@ class PlayPenguinParty(CommandItem):
         play a move in penguin party
         """
 
-        print("MOVE", move)
-
         if (True, message.channel.id) not in state.games:
             return {**kwargs, "is_satisfied": False}
 

@@ -44,13 +44,10 @@ def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
         pattern = rf"^([가-힣A-Za-z]*?)?(지금)?(바로|즉시)?((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|전체|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
         match = re.match(pattern, string)
 
-        print(match)
-
         if match is None:
             return None
 
         price_per = None
-        print(match.groups())
         (currency_name, total_amount, total_price, is_buying) = match.group(
             1, 6, 10, 15
         )
@@ -83,8 +80,6 @@ class IsTransacting(CommandItem):
 
         if data is None:
             return {**kwargs, "is_satisfied": False}
-
-        print(data)
 
         return {**kwargs, "is_satisfied": True, **data}
 
@@ -363,8 +358,6 @@ class CheckWallet(CommandItem):
             content = "돈이 없어"
 
         else:
-            print([(c.amount, c.currency_type) for c in  currencies])
-
             content = (
                 ", ".join(
                     f"{tossi.postfix(currency_type_ko(currency_name_type(currency.currency_type)), '이')} {refine_amount(currency)}{'원' if currency.currency_type == 'MONEY' else '개'}"
@@ -408,8 +401,6 @@ class IsCheckingCurrencyPrice(CommandItem):
 
         else:
             minutes = 60
-
-        print(currency_type, minutes)
 
         return {
             **kwargs,
@@ -471,7 +462,6 @@ class CheckCurrencyPrice(CommandItem):
 
             count = 50
             while count > 0:
-                print(count, os.stat(temp_png.name).st_size)
                 if os.stat(temp_png.name).st_size == 0:
                     count -= 1
                     await asyncio.sleep(0.3)
