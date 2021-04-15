@@ -5,13 +5,7 @@ from urllib.parse import unquote, urlparse
 from pathlib import PurePosixPath
 import aiohttp
 from io import BytesIO
-# import gi
-# gi.require_version('Rsvg', '2.0')
-# from gi.repository import Rsvg
-# import cairo
 import cairosvg
-# debug:
-import random
 
 
 class Send(CommandItem):
@@ -53,17 +47,8 @@ class Send(CommandItem):
 
         # svg (with text)
         if url is None:
-            # handle = Rsvg.Handle.new_from_data(svg.encode("utf-8"))
-            # svg_img = cairo.ImageSurface(cairo.FORMAT_ARGB32, handle.props.width, handle.props.height)
-            # ctx = cairo.Context(svg_img)
-            # handle.render_cairo(ctx)
-
             buffer = BytesIO()
-            # svg_img.write_to_png(buffer)
-            with open(f'/home/keonwoo/Projects/python/dochi-bot/assets/penguin_party/t{hash(random.random())}.svg', "w") as text_file:
-                text_file.write(svg)
             cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=buffer)
-            cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=f'/home/keonwoo/Projects/python/dochi-bot/assets/penguin_party/t{hash(random.random())}.png')
             buffer.seek(0)
             file_obj=discord.File(fp=buffer, filename="image.png")
 
