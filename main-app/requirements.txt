@@ -27,7 +27,5 @@ py-gnuplot==1.1.7
 APScheduler==3.7.0
 
 # images
-https://www.piwheels.org/simple/pycairo/pycairo-1.20.0-cp37-cp37m-linux_armv7l.whl#sha256=2097f748c04d95c86f0c03f62dddf727cc4fa30d1c0e70238c8985ba6b478f96 # pycairo
 https://www.piwheels.org/simple/cairosvg/CairoSVG-2.5.2-py3-none-any.whl#sha256=98c276b7e4f0caf01e5c7176765c104ffa1aa1461d63b2053b04ab663cf7052b # cairosvg
-gobject==0.1.0
-PyGObject==3.38.0
+https://www.piwheels.org/simple/pillow/Pillow-8.2.0-cp37-cp37m-linux_armv7l.whl#sha256=3da86987a323708512d4d35939b29854286ad88940ee10f2eac48bfec9dba678 # pillow
