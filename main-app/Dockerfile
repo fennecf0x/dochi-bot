@@ -36,6 +36,8 @@ FROM base
 WORKDIR /app
 COPY ./src .
 
+ARG COMMIT=""
+
 # update PATH environment variable
 ENV PATH=/root/.local:/root/.local/lib:/root/.local/lib/python3.7:/root/.local/lib/python3.7/site-packages:$PATH
 ENV PYTHONPATH=/app:$PATH
