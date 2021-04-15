@@ -5,7 +5,7 @@ FROM python:3.7-slim AS base
 
 # Install tools for building wheels
 RUN apt-get update
-RUN apt-get -y install build-essential make gcc libgmp3-dev libmpc-dev pkg-config libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev libjbig0 liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3
+RUN apt-get -y install libgmp3-dev libmpc-dev libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev libjbig0 liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -29,7 +29,6 @@ COPY requirements.txt .
 RUN --mount=type=cache,target=/root/.cache/pip python -m pip install --user -r requirements.txt --no-warn-script-location
 
 # Uninstall tools for building only
-RUN apt-get remove -y --purge make gcc build-essential
 RUN rm -rf /var/lib/apt/lists/*
 
 FROM base
