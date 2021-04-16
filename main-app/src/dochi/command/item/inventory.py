@@ -12,7 +12,7 @@ from ...database import model, get
 from ...util import image
 
 
-def render_inventory(items: List[model.Item], page: int = 1) -> dict[str, str]:
+def render_inventory(items: List[model.Item], page: int = 1) -> dict:
     # debug
     WIDTH = 6
     HEIGHT = 4
