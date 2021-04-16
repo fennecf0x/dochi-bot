@@ -414,18 +414,19 @@ class NotifyShopping(CommandItem):
 
         message_dict = game.message_dict
 
-        d = False
+        save = False
         if (
             "svg" in message_dict
             or ("delete" in message_dict and message_dict["delete"])
-        ) and game.prev_message is not None:
-            d = True
-            await game.prev_message.delete()
+        ):
+            save = True
+            if game.prev_message is not None:
+                await game.prev_message.delete()
 
         if game.phase == game.CLOSED:
             state.games.pop((False, "Shopping", message.author.id), None)
 
-        return {**kwargs, **message_dict, "delete": d}
+        return {**kwargs, **message_dict, "save": save}
 
 
 class PlayShopping(CommandItem):
@@ -467,7 +468,9 @@ class StoreShoppingMessage(CommandItem):
 
         game: Shopping = state.games[(False, "Shopping", message.author.id)]
 
-        if kwargs["delete"]:
+        print("save", kwargs["save"])
+
+        if kwargs["save"]:
             game.prev_message = prev_message
 
         return kwargs

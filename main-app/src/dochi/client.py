@@ -549,7 +549,8 @@ class DochiBot(discord.Client):
                     except:
                         pass
 
-                state.messages_to_delete.pop(message.author.id)
+                if message.author.id in state.messages_to_delete:
+                    state.messages_to_delete.pop(message.author.id)
 
             # accept messages
             ignore_likability_update = await self.group(self, message)
