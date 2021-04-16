@@ -131,7 +131,7 @@ class Shopping(SinglePlayerGame):
                     self.item_info = item_info
                     self.amount = amount
                     self.message_dict = {
-                        "content": f"{tossi.postfix(item_alias, '은')} 하나에 {item_info.price}원이야! {'하나' if amount == 1 else f'{amount}개'} 살랭?",
+                        "content": f"{tossi.postfix(item_alias, '은')} 하나에 {item_info.price}원이야! {'하나' if amount == 1 else f'{amount}개'} 살래?",
                     }
                     self.phase = Shopping.BUYING
                     return True
@@ -414,16 +414,18 @@ class NotifyShopping(CommandItem):
 
         message_dict = game.message_dict
 
+        d = False
         if (
             "svg" in message_dict
             or ("delete" in message_dict and message_dict["delete"])
         ) and game.prev_message is not None:
+            d = True
             await game.prev_message.delete()
 
         if game.phase == game.CLOSED:
             state.games.pop((False, "Shopping", message.author.id), None)
 
-        return {**kwargs, **message_dict}
+        return {**kwargs, **message_dict, "delete": d}
 
 
 class PlayShopping(CommandItem):
@@ -465,6 +467,7 @@ class StoreShoppingMessage(CommandItem):
 
         game: Shopping = state.games[(False, "Shopping", message.author.id)]
 
-        game.prev_message = prev_message
+        if kwargs["delete"]:
+            game.prev_message = prev_message
 
         return kwargs
