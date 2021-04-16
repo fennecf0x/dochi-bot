@@ -27,6 +27,8 @@ state.root = dirname(__file__)
 #
 from dochi.database import db, model, update
 
+db.drop_tables([model.Item, model.ItemInfo])
+
 db.create_tables(
     [
         model.User,
@@ -41,5 +43,5 @@ db.create_tables(
 # initialize items db
 with open(f"{os.environ.get('ASSETS_PATH')}/items/items.csv", newline="") as csvfile:
     item_info_reader = csv.reader(csvfile, delimiter=",")
-    for item_type, alias, filename, description, stackable in item_info_reader:
-        update.item_info(item_type, alias, filename, description, stackable != "False")
+    for item_type, price, alias, filename, description, stackable in item_info_reader:
+        update.item_info(item_type, int(price), alias, filename, description, stackable != "False")

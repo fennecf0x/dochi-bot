@@ -73,6 +73,12 @@ class ExitPenguinParty(CommandItem):
 
         game.player_ids.remove(message.author.id)
 
+        if game.has_started and not game.is_finished:
+            return {
+                **kwargs,
+                "content": f"게임이 이미 진행 중이야.",
+            }
+
         if len(game.player_ids) == 0:
             state.games.pop(game.id)
 

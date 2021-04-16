@@ -220,8 +220,8 @@ class PenguinParty(MultiPlayerGame):
             f"{os.environ.get('ASSETS_PATH', '')}/penguin_party/{PenguinParty.COLORS[color]}.png",
             width=96,
             height=96,
-            tx=12 + (96 + 12) * ((level / 2 if indent else 0) + offset),
-            ty=12 + (96 + 12) * (max_level - level),
+            tx=60 + (96 + 12) * ((level / 2 if indent else 0) + offset),
+            ty=60 + (96 + 12) * (max_level - level),
         )
 
     def print_hand(self, index: int) -> str:
