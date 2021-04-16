@@ -88,9 +88,7 @@ class Shopping(SinglePlayerGame):
                 }
                 return True
 
-            # 3. TODO: product info
-
-            # 4. buying/selling
+            # 3. buying/selling
             transact_match = re.match(
                 r"^(.*?)(([1-9]\d*)개|하나)?(((구매|구입)(해{줘}?|할래|할{게}|하고싶어)?|살래|살랭|살{게}|사고싶어|{줘})|(판매(해{줘}?|할래|할{게}|하고싶어)?|팔래|팔랭|팔{게}|팔고싶어))$",
                 move,
