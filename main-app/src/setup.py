@@ -27,7 +27,7 @@ state.root = dirname(__file__)
 #
 from dochi.database import db, model, update
 
-db.drop_tables([model.Item, model.ItemInfo])
+db.drop_tables([model.ItemInfo])
 
 db.create_tables(
     [

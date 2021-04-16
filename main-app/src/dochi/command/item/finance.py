@@ -32,7 +32,7 @@ class TransactionReturnType(TypedDict):
 
 
 def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
-    pattern = rf"^([가-힣A-Za-z]*?)((0|[1-9]\d*)(\.\d*)?)원(일때|에서|에)((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|전체|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
+    pattern = rf"^([가-힣A-Za-z]*?)((0|[1-9]\d*)(\.\d*)?)원(일때|에서|에)((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|전체|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살랭|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔랭|팔{게}|팔아{줘}?|팔고싶어))$"
     match = re.match(pattern, string)
 
     if match is not None:
@@ -41,7 +41,7 @@ def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
         )
 
     else:
-        pattern = rf"^([가-힣A-Za-z]*?)?(지금)?(바로|즉시)?((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|전체|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔{게}|팔아{줘}?|팔고싶어))$"
+        pattern = rf"^([가-힣A-Za-z]*?)?(지금)?(바로|즉시)?((((0|[1-9]\d*)(\.\d*)?)개)만?|(((0|[1-9]\d*)(\.\d*)?)원(어?치|만큼))만?|전부|전체|모두|다)(((매수|구매)(해{줘}?|할래|할{게}|하자|하고싶어)?|살래|살랭|살{게}|사고싶어|사자)|((매도|매각|판매)(해{줘}?|할래|할{게}|하자|하고싶어)?|팔래|팔랭|팔{게}|팔아{줘}?|팔고싶어))$"
         match = re.match(pattern, string)
 
         if match is None:
@@ -62,7 +62,9 @@ def extract_transaction_data(string: str) -> Optional[TransactionReturnType]:
         "amount": (
             float(total_amount or total_price),
             "개" if total_price is None else "원",
-        ) if (total_amount or total_price) is not None else None,
+        )
+        if (total_amount or total_price) is not None
+        else None,
         "transaction_type": "BUY" if is_buying is not None else "SELL",
     }
 
@@ -151,13 +153,15 @@ class TransactCurrency(CommandItem):
         update.currency(
             str(message.author.id),
             currency_type=CurrencyType.MONEY,
-            amount=user_money + sign * money_required,
+            amount=sign * money_required,
+            incremental=True,
         )
 
         update.currency(
             str(message.author.id),
             currency_type=currency_type,
-            amount=user_coin - sign * coin_required,
+            amount=-sign * coin_required,
+            incremental=True,
         )
 
         return {
@@ -352,7 +356,9 @@ class CheckWallet(CommandItem):
             exp = 10 ** max(0, 7 - math.ceil(math.log10(currency.amount)))
             return math.floor(currency.amount * exp) / exp
 
-        currencies = [currency for currency in currencies if refine_amount(currency) > 0]
+        currencies = [
+            currency for currency in currencies if refine_amount(currency) > 0
+        ]
 
         if currencies == []:
             content = "돈이 없어"
@@ -439,17 +445,19 @@ class CheckCurrencyPrice(CommandItem):
         with tempfile.NamedTemporaryFile(suffix=".png") as temp_png:
             df = pd.DataFrame(data={"prices": prices}, index=timestamps)
             g.set(
-                "palette defined (" + \
-                ", ".join(
-                    f"{i + 1} '{color}'" 
-                    for (i, color)
-                    in enumerate(state.coin_constants[currency_type].COLORS)
-                ) + ")"
+                "palette defined ("
+                + ", ".join(
+                    f"{i + 1} '{color}'"
+                    for (i, color) in enumerate(
+                        state.coin_constants[currency_type].COLORS
+                    )
+                )
+                + ")"
             )
             g.unset("colorbox")
             g.plot_data(
                 df,
-                'using 1:2:1 with line lw 2 lc palette',
+                "using 1:2:1 with line lw 2 lc palette",
                 term="pngcairo size 720,480",
                 out='"' + temp_png.name + '"',
                 title=f'"{currency_type_ko(currency_type)} 최근 {minutes}분 그래프"',
@@ -474,7 +482,6 @@ class CheckCurrencyPrice(CommandItem):
                     else:
                         await asyncio.sleep(0.3)
                         count += 1
-
 
         # do not proceed afterward
         return {**kwargs, "is_satisfied": False}

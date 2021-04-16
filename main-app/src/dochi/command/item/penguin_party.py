@@ -249,10 +249,12 @@ class PlayPenguinParty(CommandItem):
         ]
 
         if surrendered_player_ids != []:
-            member = message.guild.get_member(surrendered_player_ids[-1])
+            nickname = lambda m: (m.nick or m.name)
             content = (
-                ("랑 ".join(f"<@!{player_id}>" for player_id in surrendered_player_ids))
-                + tossi.pick(member.nick or member.name, "은")
+                "".join(
+                    f"<@!{player_id}>{tossi.pick(nickname(message.guild.get_member(player_id)), '랑' if player_id != surrendered_player_ids[-1] else '은')} "
+                    for player_id in surrendered_player_ids
+                )
                 + " 할 수 있는 게 없어!\n\n"
             )
 

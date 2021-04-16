@@ -31,7 +31,7 @@ class DochiBot(discord.Client):
         invitation_command = CommandGroup(
             Command(
                 StartsWithDochi(),
-                MatchRegex(f"초대해{줘}"),
+                MatchRegex(rf"초대해{줘}"),
                 Invite(),
                 MapArgs({"link": "content"}),
                 Send(),
@@ -328,7 +328,7 @@ class DochiBot(discord.Client):
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
-                MatchRegex(r"<@!(\d+)>에게(\d+)원기부", 1, 2),
+                MatchRegex(r"<@!(\d+)>에게(\d+)원(기부|전달)", 1, 2),
                 MapArgs(
                     lambda c, m, k: {
                         "amount": float(k["groups"][1]),
@@ -342,7 +342,7 @@ class DochiBot(discord.Client):
                 IsAdmin(),
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
-                MatchRegex(r"<@!(\d+)>에게서(\d+)원몰수", 1, 2),
+                MatchRegex(r"<@!(\d+)>에게서(\d+)원(몰수|소각|삭제)", 1, 2),
                 MapArgs(
                     lambda c, m, k: {
                         "amount": -float(k["groups"][1]),
@@ -350,7 +350,7 @@ class DochiBot(discord.Client):
                     }
                 ),
                 ChangeFinance(currency_type=CurrencyType.MONEY, incremental=True),
-                Args(content="몰수햇어"),
+                Args(content="소각햇어"),
                 Send(),
             ),
             Command(
@@ -423,7 +423,7 @@ class DochiBot(discord.Client):
                 MapArgs(
                     lambda c, m, k: render_inventory(
                         get.inventory(m.author.id),
-                        1 if k["groups"] is None else int(k["groups"])
+                        1 if k["groups"] is None else int(k["groups"]),
                     )
                 ),
                 Send(),
@@ -437,12 +437,22 @@ class DochiBot(discord.Client):
                 MapArgs(
                     lambda c, m, k: {
                         "void": update.inventory(
-                            m.author.id, item_type="orange", amount=1
+                            m.author.id, item_type="food_orange", amount=1
                         ),
                         "content": "그랭",
                     }
                 ),
                 Send(),
+            ),
+            Command(
+                OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
+                StripWhitespaces(),
+                StartShopping(),
+                MapArgs({"content": "move"}),
+                PlayShopping(),
+                NotifyShopping(),
+                Send(),
+                StoreShoppingMessage(),
             ),
         )
 

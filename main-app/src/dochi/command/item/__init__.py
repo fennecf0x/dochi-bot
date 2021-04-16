@@ -41,3 +41,4 @@ from .ff_triple_triad import *
 from .penguin_party import *
 from .finance import *
 from .inventory import *
+from .shopping import *

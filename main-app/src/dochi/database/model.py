@@ -128,8 +128,8 @@ class ItemInfo(Base):
     """price: int"""
     price = peewee.IntegerField()
 
-    """alias: string `|alias_1|alias_2|...|alias_n|`"""
-    alias = peewee.TextField(default="|")
+    """alias: string"""
+    alias = peewee.TextField()
 
     """image: string"""
     image = peewee.TextField()

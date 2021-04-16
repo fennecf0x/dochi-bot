@@ -18,6 +18,8 @@ def render_inventory(items: List[model.Item], page: int = 1) -> dict:
     HEIGHT = 4
     NUM = WIDTH * HEIGHT
 
+    items = [item for item in items if item.amount > 0]
+
     items.sort(key=lambda item: item.item_type)
     tot_page = math.ceil(len(items) / NUM)
 
@@ -85,9 +87,9 @@ def render_inventory(items: List[model.Item], page: int = 1) -> dict:
             # item labels
             *[
                 f"""<text style="font-size:36px;{text_style}" {text_attr} transform="matrix({get_text_scale(len(
-                    item_infos[item.item_type].alias.split("|")[0]
+                    item_infos[item.item_type].alias
                 ))},{218 + (n % WIDTH) * 196},{218 + (n // WIDTH) * 196 + 54})">{
-                    append_ellipsis(item_infos[item.item_type].alias.split("|")[0])
+                    append_ellipsis(item_infos[item.item_type].alias)
                 }</text>"""
                 for n, item in enumerate(items)
             ],
