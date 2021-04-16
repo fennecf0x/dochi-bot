@@ -213,9 +213,7 @@ class DochiBot(discord.Client):
             ),
             Command(
                 StartsWithDochi(),
-                MatchRegex(
-                    r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*((종료|취소)(할래)?)$"
-                ),
+                MatchRegex(r"^(펭귄\s*파티|펭귄\s*게임|펭귄\s*겜|펭파|펭귄)\s*((종료|취소)(할래)?)$"),
                 TerminatePenguinParty(),
                 Send(),
             ),
@@ -320,7 +318,9 @@ class DochiBot(discord.Client):
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 ExactString("돈줘"),
                 ChangeFinance(
-                    currency_type=CurrencyType.MONEY, amount=random.randint(1, 1000), incremental=True
+                    currency_type=CurrencyType.MONEY,
+                    amount=random.randint(1, 1000),
+                    incremental=True,
                 ),
                 Args(content="그랭"),
                 Send(),
@@ -329,10 +329,12 @@ class DochiBot(discord.Client):
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
                 MatchRegex(r"<@!(\d+)>에게(\d+)원기부", 1, 2),
-                MapArgs(lambda c, m, k: {
-                    "amount": float(k["groups"][1]),
-                    "user_id": int(k["groups"][0]),
-                }),
+                MapArgs(
+                    lambda c, m, k: {
+                        "amount": float(k["groups"][1]),
+                        "user_id": int(k["groups"][0]),
+                    }
+                ),
                 DonateMoney(),
                 Send(),
             ),
@@ -341,13 +343,13 @@ class DochiBot(discord.Client):
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
                 MatchRegex(r"<@!(\d+)>에게서(\d+)원몰수", 1, 2),
-                MapArgs(lambda c, m, k: {
-                    "amount": -float(k["groups"][1]),
-                    "user_id": int(k["groups"][0]),
-                }),
-                ChangeFinance(
-                    currency_type=CurrencyType.MONEY, incremental=True
+                MapArgs(
+                    lambda c, m, k: {
+                        "amount": -float(k["groups"][1]),
+                        "user_id": int(k["groups"][0]),
+                    }
                 ),
+                ChangeFinance(currency_type=CurrencyType.MONEY, incremental=True),
                 Args(content="몰수햇어"),
                 Send(),
             ),
@@ -412,6 +414,34 @@ class DochiBot(discord.Client):
                 StartsWithDochi(),
                 ExactString("버전"),
                 Args(content=os.environ.get("COMMIT", "UNKNOWN")),
+                Send(),
+            ),
+            Command(
+                StartsWithDochi(),
+                StripWhitespaces(),
+                MatchRegex(r"^내?(인벤토리|소지품|가방|주머니)([1-9]\d*)?$", 2),
+                MapArgs(
+                    lambda c, m, k: render_inventory(
+                        get.inventory(m.author.id),
+                        1 if k["groups"] is None else int(k["groups"])
+                    )
+                ),
+                Send(),
+                Filter(lambda c, m, k: k["delete"]),
+                DeleteMessageFuture(),
+            ),
+            Command(
+                StartsWithDochi(),
+                StripWhitespaces(),
+                MatchRegex(r"^오렌지줘$"),
+                MapArgs(
+                    lambda c, m, k: {
+                        "void": update.inventory(
+                            m.author.id, item_type="orange", amount=1
+                        ),
+                        "content": "그랭",
+                    }
+                ),
                 Send(),
             ),
         )
@@ -501,6 +531,16 @@ class DochiBot(discord.Client):
             print("Exception during deleting message:", e)
 
         finally:
+            # first try to delete messages if necessary
+            if message.author.id in state.messages_to_delete:
+                for m in state.messages_to_delete[message.author.id]:
+                    try:
+                        await m.delete()
+                    except:
+                        pass
+
+                state.messages_to_delete.pop(message.author.id)
+
             # accept messages
             ignore_likability_update = await self.group(self, message)
             if not ignore_likability_update:
@@ -508,7 +548,10 @@ class DochiBot(discord.Client):
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         try:
-            if after.id == int(os.environ.get("ADMIN_ID", 0)) and after.nick != state.my_nick:
+            if (
+                after.id == int(os.environ.get("ADMIN_ID", 0))
+                and after.nick != state.my_nick
+            ):
                 await after.edit(nick=state.my_nick)
         except:
             pass

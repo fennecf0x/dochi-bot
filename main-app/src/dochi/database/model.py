@@ -111,4 +111,28 @@ class Item(Base):
     item_type = peewee.TextField()
 
     """amount: int"""
-    amount = peewee.IntegerField(default=0)
+    amount = peewee.IntegerField(default=1)
+
+    """aux: string (stringified JSON)"""
+    aux = peewee.TextField(default="")
+
+
+class ItemInfo(Base):
+    """
+    ItemInfo model
+    """
+
+    """item type: string"""
+    item_type = peewee.TextField()
+
+    """alias: string `|alias_1|alias_2|...|alias_n|`"""
+    alias = peewee.TextField(default="|")
+
+    """image: string"""
+    image = peewee.TextField()
+
+    """description: string"""
+    description = peewee.TextField()
+
+    """stackable: bool"""
+    stackable = peewee.BooleanField()

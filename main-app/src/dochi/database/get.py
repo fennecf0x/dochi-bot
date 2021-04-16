@@ -42,6 +42,23 @@ def inventory(user_id: str) -> List[model.Item]:
     return list(user(user_id).inventory)
 
 
+def item_info(item_type: str) -> Optional[model.ItemInfo]:
+    try:
+        return model.ItemInfo.get(model.ItemInfo.item_type == item_type)
+
+    except model.ItemInfo.DoesNotExist:  # pylint: disable=maybe-no-member
+        return None
+
+
+def item_info_by_alias(alias: str) -> Optional[model.ItemInfo]:
+    items = list(model.ItemInfo.select().where(model.ItemInfo.alias.contains(alias)))
+
+    if items == []:
+        return None
+
+    return items[0]
+
+
 def likability(user_id: str) -> Likability:
     u = user(user_id)
 

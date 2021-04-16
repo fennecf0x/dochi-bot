@@ -98,11 +98,29 @@ def get_image_def(path: str, t: Literal["png", "jpg"] = "png") -> str:
 
 
 # image use generator
-def use_image(path: str, t: Literal["png", "jpg"] = "png", *, width: Optional[float] = None, height: Optional[float] = None, tx: float = 0, ty: float = 0) -> str:
+def use_image(
+    path: str,
+    t: Literal["png", "jpg"] = "png",
+    *,
+    width: Optional[float] = None,
+    height: Optional[float] = None,
+    tx: float = 0,
+    ty: float = 0,
+) -> str:
     (iw, ih) = get_image_size(path)
-    sx = 1 if width is None else width / iw
-    sy = 1 if height is None else height / ih
-    return f'<use href="#img_{get_hash(path)}" transform="matrix({sx}, 0, 0, {sy}, {tx}, {ty})" />'
+    if width is None and height is None:
+        sx = 1
+        sy = 1
+    elif width is None:
+        sy = height / ih
+        sx = sy
+    elif height is None:
+        sx = width / iw
+        sy = sx
+    else:
+        sx = width / iw
+        sy = height / ih
+    return f'<use href="#img_{get_hash(path)}" transform="matrix({sx}, 0, 0, {sy}, {tx - iw / 2 * sx}, {ty - ih / 2 * sy})" />'
 
 
 # Rounded square generator
@@ -136,13 +154,13 @@ def get_squircle_path(
 ) -> str:
     points = [
         (
-            w / 2 * (math.cos(t) ** (2 / exponent)),
-            h / 2 * (math.sin(t) ** (2 / exponent)),
+            w / 2 * (math.cos(math.pi / (2 * resolution) * t) ** (2 / exponent)),
+            h / 2 * (math.sin(math.pi / (2 * resolution) * t) ** (2 / exponent)),
         )
-        for t in range(0, math.pi / 2, math.pi / (2 * resolution))
+        for t in range(0, resolution)
     ]
     # 1st quadrant to 1st & 2nd quadrants
-    points = points + [(-y, x) for (x, y) in points]
+    points = points + [(-y / h * w, x * h / w) for (x, y) in points]
     # 1st & 2nd quadrants to 1st - 4th quadrants
     points = points + [(-x, -y) for (x, y) in points] + [points[0]]
 

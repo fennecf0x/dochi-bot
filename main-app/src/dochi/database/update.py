@@ -98,10 +98,7 @@ def currency_info(
 
 
 def currency_price_record(
-    currency_type: CurrencyType,
-    *,
-    timestamp: float,
-    price: float
+    currency_type: CurrencyType, *, timestamp: float, price: float
 ) -> model.CurrencyPriceRecord:
     currency_price_record = model.CurrencyPriceRecord.create(
         currency_type=currency_type.name,
@@ -124,15 +121,45 @@ def inventory(
     *,
     item_type: str,
     amount: int,
-) -> model.Currency:
+    incremental: bool = True,
+) -> model.Item:
     try:
         item = model.Item.get(user_id=user_id, item_type=item_type)
-        item.amount = amount
+        item.amount = item.amount + amount if incremental else amount
         item.save()
 
         return item
 
     except model.Item.DoesNotExist:  # pylint: disable=maybe-no-member
         item = model.Item.create(user_id=user_id, item_type=item_type, amount=amount)
+
+        return item
+
+
+def item_info(
+    item_type: str,
+    alias: str,
+    image: str,
+    description: str,
+    stackable: bool,
+) -> model.ItemInfo:
+    try:
+        item = model.ItemInfo.get(item_type=item_type)
+        item.alias = alias
+        item.image = image
+        item.description = description
+        item.stackable = stackable
+        item.save()
+
+        return item
+
+    except model.ItemInfo.DoesNotExist:  # pylint: disable=maybe-no-member
+        item = model.ItemInfo.create(
+            item_type=item_type,
+            alias=alias,
+            image=image,
+            description=description,
+            stackable=stackable,
+        )
 
         return item
