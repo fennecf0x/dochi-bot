@@ -125,6 +125,9 @@ class ItemInfo(Base):
     """item type: string"""
     item_type = peewee.TextField()
 
+    """price: int"""
+    price = peewee.IntegerField()
+
     """alias: string `|alias_1|alias_2|...|alias_n|`"""
     alias = peewee.TextField(default="|")
 

@@ -138,6 +138,7 @@ def inventory(
 
 def item_info(
     item_type: str,
+    price: int,
     alias: str,
     image: str,
     description: str,
@@ -145,6 +146,7 @@ def item_info(
 ) -> model.ItemInfo:
     try:
         item = model.ItemInfo.get(item_type=item_type)
+        item.price = price
         item.alias = alias
         item.image = image
         item.description = description
@@ -156,6 +158,7 @@ def item_info(
     except model.ItemInfo.DoesNotExist:  # pylint: disable=maybe-no-member
         item = model.ItemInfo.create(
             item_type=item_type,
+            price=price,
             alias=alias,
             image=image,
             description=description,

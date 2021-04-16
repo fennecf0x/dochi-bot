@@ -72,10 +72,11 @@ def render_svg(
     min_x: float = 0,
     min_y: float = 0,
     *,
+    scale: float = 1,
     defs: List[str] = [],
     inner: List[str] = [],
 ) -> str:
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="{min_x} {min_y} {width} {height}" width="{width}pt" height="{height}pt"><defs>{"".join(defs)}</defs>{"".join(inner)}</svg>"""
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="{min_x} {min_y} {width} {height}" width="{width * scale}pt" height="{height * scale}pt"><defs>{"".join(defs)}</defs>{"".join(inner)}</svg>"""
 
 
 def get_hash(o) -> str:
