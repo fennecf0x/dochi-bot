@@ -59,9 +59,13 @@ def render_inventory(items: List[model.Item], page: int = 1) -> dict:
             # wrapper
             f"""<path d="{image.get_squircle_path(240 + WIDTH * 196, 240 + HEIGHT * 196, 120 + WIDTH * 98, 120 + HEIGHT * 98)}" fill="rgb(255,250,228)" />""",
             # pagination
-            *[
-                f"""<text style="font-size:48px;font-family:Noto Sans CJK KR;font-style:normal;fill:#80745A;fill-opacity:1;stroke:#80745A;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" {text_attr} transform="matrix(1,0,0,1,{120 + WIDTH * 98},{HEIGHT * 196 + 160})">{page} / {tot_page}</text>"""
-            ],
+            *(
+                [
+                    f"""<text style="font-size:48px;font-family:Noto Sans CJK KR;font-style:normal;fill:#80745A;fill-opacity:1;stroke:#80745A;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" {text_attr} transform="matrix(1,0,0,1,{120 + WIDTH * 98},{HEIGHT * 196 + 160})">{page} / {tot_page}</text>"""
+                ]
+                if tot_page > 0
+                else []
+            ),
             # placeholders
             *[
                 f"""<circle vector-effect="non-scaling-stroke" cx="{218 + (n % WIDTH) * 196}" cy="{218 + (n // WIDTH) * 196 - 30}" r="32" fill="rgb(237,226,202)" />"""
