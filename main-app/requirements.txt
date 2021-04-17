@@ -1,6 +1,6 @@
 # base
 wheel
-aiohttp==3.7.4
+https://www.piwheels.org/simple/aiohttp/aiohttp-3.7.4.post0-cp37-cp37m-linux_armv7l.whl#sha256=de54bda6d9e306a1284ca3dc8dcc691f11efce9561d872b22c5a2729b0e3d096 # aiohttp
 requests==2.25.1
 ujson==4.0.2
 typing-extensions
@@ -8,7 +8,7 @@ typing-extensions
 # discord
 discord.py[voice]~=1.6.0
 discord.py-stubs~=1.6.0.2
-ffmpeg==1.4
+https://www.piwheels.org/simple/ffmpeg/ffmpeg-1.4-py3-none-any.whl#sha256=7520f80e992341805c7b39e77974f2bb561ad74f52bd31866ce6826dcb89ff67 # ffmpeg
 https://www.piwheels.org/simple/pynacl/PyNaCl-1.4.0-cp37-cp37m-linux_armv7l.whl#sha256=d38dc5f47724bc1487b56b4776a1b64459acd6b8c9cb544db6eba60977821c1c # pynacl
 
 # database

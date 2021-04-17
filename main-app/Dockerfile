@@ -17,7 +17,7 @@ COPY assets/fonts/AppleColorEmoji.ttf /usr/share/fonts/truetype/apple
 RUN chmod 644 /usr/share/fonts/opentype/noto/* /usr/share/fonts/truetype/apple/*
 
 RUN apt-get update
-RUN apt-get -y install libgmp3-dev libmpc-dev libcairo2-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev
+RUN apt-get -y install gcc libgmp3-dev libmpc-dev libcairo2-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev
 
 # Rebuild the font cache.
 RUN fc-cache -fv
