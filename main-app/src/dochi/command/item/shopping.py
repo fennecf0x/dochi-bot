@@ -68,9 +68,9 @@ class Shopping(SinglePlayerGame):
                 return True
 
             # 2. change page
-            change_page_match = re.match(r"^(상점)?([1-9]\d*)?$", move)
+            change_page_match = re.match(r"^상점([1-9]\d*)?$", move)
             if change_page_match is not None:
-                page = int(change_page_match.group(2) or 1)
+                page = int(change_page_match.group(1) or 1)
                 tot_page = math.ceil(len(self.item_infos) / 24)
 
                 if page > tot_page and self.item_infos != []:
@@ -465,8 +465,6 @@ class StoreShoppingMessage(CommandItem):
             return {**kwargs, "is_satisfied": False}
 
         game: Shopping = state.games[(False, "Shopping", message.author.id)]
-
-        print("save", kwargs["save"])
 
         if kwargs["save"]:
             game.prev_message = prev_message
