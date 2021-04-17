@@ -3,9 +3,6 @@
 
 FROM python:3.7-slim AS base
 
-# Install tools for building wheels
-RUN apt-get update
-RUN apt-get -y install libgmp3-dev libmpc-dev libcairo2-dev librsvg2-dev libgirepository1.0-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev libjbig0 liblcms2-2 libopenjp2-7 libtiff5 libwebp6 libwebpdemux2 libwebpmux3
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -14,12 +11,13 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # install font
-RUN mkdir -p /usr/share/fonts/opentype/noto
-RUN mkdir -p /usr/share/fonts/truetype/apple
+RUN mkdir -p /usr/share/fonts/opentype/noto /usr/share/fonts/truetype/apple
 COPY assets/fonts/NotoSansCJKkr-Regular.otf /usr/share/fonts/opentype/noto
 COPY assets/fonts/AppleColorEmoji.ttf /usr/share/fonts/truetype/apple
-RUN chmod 644 /usr/share/fonts/opentype/noto/*
-RUN chmod 644 /usr/share/fonts/truetype/apple/*
+RUN chmod 644 /usr/share/fonts/opentype/noto/* /usr/share/fonts/truetype/apple/*
+
+RUN apt-get update
+RUN apt-get -y install libgmp3-dev libmpc-dev libcairo2-dev ffmpeg gnuplot libatlas-base-dev libpango1.0-dev
 
 # Rebuild the font cache.
 RUN fc-cache -fv
@@ -43,6 +41,5 @@ ENV PATH=/root/.local:/root/.local/lib:/root/.local/lib/python3.7:/root/.local/l
 ENV PYTHONPATH=/app:$PATH
 ENV AM_I_IN_A_DOCKER_CONTAINER=true
 ENV COMMIT=${COMMIT}
-
 
 CMD ["python3.7", "main.py"]
