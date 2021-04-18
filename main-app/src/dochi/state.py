@@ -4,6 +4,7 @@ State manager
 Manage bot's states and global variables
 """
 
+import os
 from dataclasses import dataclass
 from typing import List, Tuple, Set, cast
 from dochi.util.dict import DictX
