@@ -2,6 +2,7 @@ import os
 from os.path import join, dirname
 import sys
 import csv
+import shutil
 
 
 # Dotenv setting
@@ -41,6 +42,9 @@ db.create_tables(
 )
 
 # initialize items db
+shutil.rmtree(f"{os.environ.get('CACHE_PATH', '')}/items")
+os.mkdir(f"{os.environ.get('CACHE_PATH', '')}/items")
+
 with open(f"{os.environ.get('ASSETS_PATH')}/items/items.csv", newline="") as csvfile:
     item_info_reader = csv.reader(csvfile, delimiter=",")
     for item_type, price, alias, filename, description, stackable in item_info_reader:
