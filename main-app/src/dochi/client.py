@@ -299,11 +299,19 @@ class DochiBot(discord.Client):
             ChangeNickname(),
         )
 
-        mynick_command = Command(
-            IsAdmin(),
-            MatchRegex(r"^\/mynick\s*(.*?)$", 1),
-            MapArgs(lambda c, m, k: {"nickname": k["groups"]}),
-            ChangeMyNickname(),
+        mynick_command = CommandGroup(
+            Command(
+                IsAdmin(),
+                MatchRegex(r"^\/mynick\s*(.*?)$", 1),
+                MapArgs(lambda c, m, k: {"nickname": k["groups"]}, user_id=int(os.environ.get("ADMIN_ID"))),
+                ChangeMyNickname(),
+            ),
+            Command(
+                IsAdmin(),
+                MatchRegex(r"^\/naraenick\s*(.*?)$", 1),
+                MapArgs(lambda c, m, k: {"nickname": k["groups"]}, user_id=477524444542402569),
+                ChangeMyNickname(),
+            )
         )
 
         finance_commands = CommandGroup(
