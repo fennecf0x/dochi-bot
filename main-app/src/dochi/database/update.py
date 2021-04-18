@@ -43,7 +43,7 @@ def currency(
 ) -> model.Currency:
     try:
         currency = model.Currency.get(user_id=user_id, currency_type=currency_type.name)
-        currency.amount = currency.amount + amount if incremental else currency.amount
+        currency.amount = currency.amount + amount if incremental else amount
         currency.save()
 
         return currency
