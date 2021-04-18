@@ -47,9 +47,13 @@ class Send(CommandItem):
 
         # svg (with text)
         if url is None:
-            buffer = BytesIO()
-            cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=buffer)
-            buffer.seek(0)
+            if "tmpfilename" in kwargs:
+                buffer = kwargs["tmpfilename"]
+                cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=buffer)
+            else:
+                buffer = BytesIO()
+                cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=buffer)
+                buffer.seek(0)
             file_obj=discord.File(fp=buffer, filename="image.png")
 
             if reply:

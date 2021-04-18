@@ -84,7 +84,7 @@ class Shopping(SinglePlayerGame):
                 self.message_dict = {
                     "content": "사고 싶은 게 있으면 '돛 오렌지 2개 구매'처럼 살 수 있어. "
                     + ("상점의 다른 곳을 보려면 '돛 상점 (페이지 수)'를 입력해줘!" if tot_page > 1 else ""),
-                    "svg": self.render_store(),
+                    **self.render_store(),
                 }
                 return True
 
@@ -204,7 +204,7 @@ class Shopping(SinglePlayerGame):
 
                     self.message_dict = {
                         "content": "고마워, 또 살 거 있으면 말해줘!",
-                        "svg": self.render_store(),
+                        **self.render_store(),
                     }
 
                 self.item_info = None
@@ -219,7 +219,7 @@ class Shopping(SinglePlayerGame):
                 # negative response
                 self.message_dict = {
                     "content": "알앗어, 사고 싶은 게 생기면 알려줘.",
-                    "svg": self.render_store(),
+                    **self.render_store(),
                 }
 
                 self.item_info = None
@@ -268,7 +268,7 @@ class Shopping(SinglePlayerGame):
 
                     self.message_dict = {
                         "content": "고마워, 또 팔고 싶은 거 있으면 말해줘!",
-                        "svg": self.render_store(),
+                        **self.render_store(),
                     }
 
                 self.item_info = None
@@ -283,7 +283,7 @@ class Shopping(SinglePlayerGame):
                 # negative response
                 self.message_dict = {
                     "content": "알앗어, 팔고 싶은 게 생기면 알려줘.",
-                    "svg": self.render_store(),
+                    **self.render_store(),
                 }
 
                 self.item_info = None
@@ -293,9 +293,13 @@ class Shopping(SinglePlayerGame):
 
         return False
 
-    def render_store(self) -> str:
+    def render_store(self) -> dict:
         item_infos = self.item_infos
         page = self.page
+
+        filename = f"{os.environ.get('CACHE_PATH', '')}/items/{page}.png"
+        if os.path.exists(filename):
+            return {"file": discord.File(filename)}
 
         WIDTH = 6
         HEIGHT = 4
@@ -372,7 +376,7 @@ class Shopping(SinglePlayerGame):
             ],
         )
 
-        return svg
+        return {"svg": svg, "tmpfilename": filename}
 
 
 class StartShopping(CommandItem):
@@ -413,9 +417,8 @@ class NotifyShopping(CommandItem):
         message_dict = game.message_dict
 
         save = False
-        if (
-            "svg" in message_dict
-            or ("delete" in message_dict and message_dict["delete"])
+        if "svg" in message_dict or "file" in message_dict or (
+            "delete" in message_dict and message_dict["delete"]
         ):
             save = True
             if game.prev_message is not None:
