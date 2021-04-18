@@ -273,6 +273,7 @@ class ChangeFinance(CommandItem):
             user_id,
             currency_type=currency_type,
             amount=max(base + amount, 0),
+            incremental=False,
         )
 
         return kwargs
@@ -312,6 +313,7 @@ class DonateMoney(CommandItem):
             str(message.author.id),
             currency_type=currency_type,
             amount=max(author_currency - amount, 0),
+            incremental=False,
         )
 
         # receive
@@ -332,6 +334,7 @@ class DonateMoney(CommandItem):
             str(user_id),
             currency_type=currency_type,
             amount=max(receiver_currency + amount, 0),
+            incremental=False,
         )
 
         return {**kwargs, "content": "전달햇어"}
