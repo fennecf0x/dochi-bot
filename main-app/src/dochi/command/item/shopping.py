@@ -14,6 +14,7 @@ import tossi
 from ...database import model, get, update
 from ...database.types import CurrencyType
 from ...util import image
+from ....dochi import util
 from ..command import CommandItem
 from ...games.game import SinglePlayerGame
 from ..patterns import 줘, 게
@@ -99,7 +100,7 @@ class Shopping(SinglePlayerGame):
                 is_buying = False if is_buying is None else True
 
                 item_info = next(
-                    (item for item in self.item_infos if item_alias == item.alias), None
+                    (item for item in self.item_infos if item_alias == util.string.strip_whitespaces(item.alias)), None
                 )
                 if item_info is None:
                     self.message_dict = {
