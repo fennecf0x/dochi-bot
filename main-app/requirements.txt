@@ -2,7 +2,7 @@
 wheel
 https://www.piwheels.org/simple/aiohttp/aiohttp-3.7.4.post0-cp37-cp37m-linux_armv7l.whl#sha256=de54bda6d9e306a1284ca3dc8dcc691f11efce9561d872b22c5a2729b0e3d096 # aiohttp
 requests==2.25.1
-ujson==4.0.2
+https://www.piwheels.org/simple/ujson/ujson-4.0.2-cp37-cp37m-linux_armv7l.whl#sha256=cfe419a1ecb6523f9e5795537beb72055a05db24fdfbcd827fbaa5741550feb1
 typing-extensions
 
 # discord
