@@ -308,6 +308,7 @@ class DochiBot(discord.Client):
                     user_id=int(os.environ.get("ADMIN_ID")),
                 ),
                 ChangeUserNickname(),
+                DeleteMessage(),
             ),
             Command(
                 IsAdmin(),
@@ -317,6 +318,7 @@ class DochiBot(discord.Client):
                     user_id=477524444542402569,
                 ),
                 ChangeUserNickname(),
+                DeleteMessage(),
             ),
         )
 
