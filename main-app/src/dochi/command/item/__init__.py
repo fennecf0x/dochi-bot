@@ -32,7 +32,7 @@ from .shout import Shout
 from .wait import Wait
 from .mute import Mute
 from .change_nickname import ChangeNickname
-from .change_my_nickname import ChangeMyNickname
+from .change_user_nickname import ChangeUserNickname
 from .analyze_emotion import AnalyzeEmotion
 
 # complex things

@@ -97,7 +97,7 @@ class State:
     games: dict # dict[Game.id, Game]
     coin_constants: dict  # dict[CurrencyType, CoinPriceConstants]
     coin_params: dict  # dict[CurrencyType, CoinPriceParams]
-    my_nick: str
+    nicks: dict # dict[int, str]
     messages_to_delete: dict # dict[int (author id), List[discord.Message]]
 
 
@@ -108,6 +108,8 @@ state: State = cast(State, DictX({
     "games": {},
     "coin_constants": coin_constants,
     "coin_params": DictX({}),
-    "my_nick": "카누",
+    "nicks": {
+        int(os.environ.get("ADMIN_ID")): "카누"
+    },
     "messages_to_delete": {},
 }))

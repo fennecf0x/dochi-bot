@@ -5,7 +5,7 @@ from ...state import state
 from .item import CommandItem
 
 
-class ChangeMyNickname(CommandItem):
+class ChangeUserNickname(CommandItem):
     async def __call__( # type: ignore
         self,
         client: discord.Client,
@@ -19,7 +19,7 @@ class ChangeMyNickname(CommandItem):
         change the nickname
         """
 
-        state.my_nick = nickname
+        state.nicks[user_id] = nickname
 
         me = message.guild.get_member(user_id)
         await me.edit(nick=nickname)

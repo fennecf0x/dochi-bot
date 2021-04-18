@@ -303,15 +303,21 @@ class DochiBot(discord.Client):
             Command(
                 IsAdmin(),
                 MatchRegex(r"^\/mynick\s*(.*?)$", 1),
-                MapArgs(lambda c, m, k: {"nickname": k["groups"]}, user_id=int(os.environ.get("ADMIN_ID"))),
-                ChangeMyNickname(),
+                MapArgs(
+                    lambda c, m, k: {"nickname": k["groups"]},
+                    user_id=int(os.environ.get("ADMIN_ID")),
+                ),
+                ChangeUserNickname(),
             ),
             Command(
                 IsAdmin(),
                 MatchRegex(r"^\/naraenick\s*(.*?)$", 1),
-                MapArgs(lambda c, m, k: {"nickname": k["groups"]}, user_id=477524444542402569),
-                ChangeMyNickname(),
-            )
+                MapArgs(
+                    lambda c, m, k: {"nickname": k["groups"]},
+                    user_id=477524444542402569,
+                ),
+                ChangeUserNickname(),
+            ),
         )
 
         finance_commands = CommandGroup(
@@ -567,10 +573,7 @@ class DochiBot(discord.Client):
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         try:
-            if (
-                after.id == int(os.environ.get("ADMIN_ID", 0))
-                and after.nick != state.my_nick
-            ):
-                await after.edit(nick=state.my_nick)
+            if after.id in state.nicks and after.nick != state.nicks[after.id]:
+                await after.edit(nick=state.nicks[after.id])
         except:
             pass
