@@ -356,14 +356,14 @@ class FFTripleTriad(MultiPlayerGame):
     def insert_image(basename: str, column: int, row: int) -> str:
         return image.use_image(
             os.environ.get("ASSETS_PATH", "") + "/ff_tt/" + basename + ".png",
-            tx=12 + 268 * row,
-            ty=12 + 268 * column,
+            tx=140 + 268 * row,
+            ty=140 + 268 * column,
         )
 
     def print_hand(self, index: int) -> str:
         hand = self.hands[index]
         gen_path = lambda i: (
-            f"""<path d="{image.get_rounded_square_path(256, 256, 16, cx=140 + 268 * i, cy=224)}" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />"""
+            f"""<path d="{image.get_rounded_square_path(256, 256, 16, cx=140 + 268 * i, cy=220)}" style="stroke:none;fill:#EBEBEB;stroke-miterlimit:10;" />"""
         )
         gen_text = lambda i: (
             f"""
@@ -414,7 +414,7 @@ class FFTripleTriad(MultiPlayerGame):
                 image.get_image_def(
                     os.environ.get("ASSETS_PATH", "")
                     + "/ff_tt/"
-                    + FFTripleTriad.tile_to_str(self.board)
+                    + FFTripleTriad.tile_to_str(self.board[i])
                     + ".png"
                 )
                 for i in range(9)
