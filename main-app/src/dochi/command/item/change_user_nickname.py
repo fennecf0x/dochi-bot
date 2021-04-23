@@ -13,7 +13,7 @@ class ChangeUserNickname(CommandItem):
         *,
         user_id: int,
         nickname: str = "",
-        unset: bool = False
+        unset: bool = False,
         **kwargs,
     ):
         """
