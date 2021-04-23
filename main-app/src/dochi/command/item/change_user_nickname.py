@@ -12,14 +12,20 @@ class ChangeUserNickname(CommandItem):
         message: discord.Message,
         *,
         user_id: int,
-        nickname: str,
+        nickname: str = "",
+        unset: bool = False
         **kwargs,
     ):
         """
         change the nickname
         """
 
-        state.nicks[user_id] = nickname
+        if unset:
+            if user_id in state.nicks:
+                state.nicks.pop(user_id)
 
-        me = message.guild.get_member(user_id)
-        await me.edit(nick=nickname)
+        else:
+            state.nicks[user_id] = nickname
+
+            me = message.guild.get_member(user_id)
+            await me.edit(nick=nickname)

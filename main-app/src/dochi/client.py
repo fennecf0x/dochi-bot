@@ -320,6 +320,17 @@ class DochiBot(discord.Client):
                 ChangeUserNickname(),
                 DeleteMessage(),
             ),
+            Command(
+                IsAdmin(),
+                MatchRegex(r"^\/unsetnaraenick$"),
+                MapArgs(
+                    lambda c, m, k: {"nickname": k["groups"]},
+                    user_id=477524444542402569,
+                    unset=True,
+                ),
+                ChangeUserNickname(),
+                DeleteMessage(),
+            ),
         )
 
         finance_commands = CommandGroup(
