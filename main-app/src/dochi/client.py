@@ -323,8 +323,7 @@ class DochiBot(discord.Client):
             Command(
                 IsAdmin(),
                 MatchRegex(r"^\/unsetnaraenick$"),
-                MapArgs(
-                    lambda c, m, k: {"nickname": k["groups"]},
+                Args(
                     user_id=477524444542402569,
                     unset=True,
                 ),
