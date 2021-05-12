@@ -322,6 +322,16 @@ class DochiBot(discord.Client):
             ),
             Command(
                 IsAdmin(),
+                MatchRegex(r"^\/sso(nick|name)\s*(.*?)$", 2),
+                MapArgs(
+                    lambda c, m, k: {"nickname": k["groups"]},
+                    user_id=760141134675968061,
+                ),
+                ChangeUserNickname(),
+                DeleteMessage(),
+            ),
+            Command(
+                IsAdmin(),
                 MatchRegex(r"^\/unsetnaraenick$"),
                 Args(
                     user_id=477524444542402569,
