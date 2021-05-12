@@ -280,13 +280,13 @@ class DochiBot(discord.Client):
         self.mute_commands = CommandGroup(
             Command(
                 IsAdmin(),
-                MatchRegex(r"^\/mute\s+<@!(\d+?)>$", 1),
+                MatchRegex(r"^\/mute\s+<@!?(\d+?)>$", 1),
                 MapArgs(lambda c, m, k: {"user_id": int(k["groups"])}),
                 Mute(True),
             ),
             Command(
                 IsAdmin(),
-                MatchRegex(r"^\/unmute\s+<@!(\d+?)>$", 1),
+                MatchRegex(r"^\/unmute\s+<@!?(\d+?)>$", 1),
                 MapArgs(lambda c, m, k: {"user_id": int(k["groups"])}),
                 Mute(False),
             ),
@@ -354,7 +354,7 @@ class DochiBot(discord.Client):
             Command(
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
-                MatchRegex(r"<@!(\d+)>에게(\d+)원(기부|전달)", 1, 2),
+                MatchRegex(r"<@!?(\d+)>에게(\d+)원(기부|전달)", 1, 2),
                 MapArgs(
                     lambda c, m, k: {
                         "amount": float(k["groups"][1]),
@@ -368,7 +368,7 @@ class DochiBot(discord.Client):
                 IsAdmin(),
                 OneOf(StartsWithDochi(), Filter(lambda c, m, k: True)),
                 StripWhitespaces(),
-                MatchRegex(r"<@!(\d+)>에게서(\d+)원(몰수|소각|삭제)", 1, 2),
+                MatchRegex(r"<@!?(\d+)>에게서(\d+)원(몰수|소각|삭제)", 1, 2),
                 MapArgs(
                     lambda c, m, k: {
                         "amount": -float(k["groups"][1]),
@@ -376,7 +376,7 @@ class DochiBot(discord.Client):
                     }
                 ),
                 ChangeFinance(currency_type=CurrencyType.MONEY, incremental=True),
-                Args(content="소각햇어"),
+                Args(content="몰수햇어"),
                 Send(),
             ),
             Command(
@@ -584,6 +584,7 @@ class DochiBot(discord.Client):
                 await self.likability_update_commands(self, message)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
+        return
         try:
             if after.id in state.nicks and after.nick != state.nicks[after.id]:
                 await after.edit(nick=state.nicks[after.id])
