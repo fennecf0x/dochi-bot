@@ -41,7 +41,7 @@ class SampleFrom(CommandItem, Generic[T]):
 
         for choice in choices:
             salt = "@@DOCHIDOCHI_BOTBOT@@"
-            random.seed(hash(choice + salt + str(state.mood)))
+            random.seed(f"{hash(salt + str(state.mood))}|{choice}|{salt}|KANU")
             priority = random.random()
             prioritised_choices.append((priority, choice))
 
