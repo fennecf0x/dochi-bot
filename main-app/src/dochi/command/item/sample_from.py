@@ -45,7 +45,7 @@ class SampleFrom(CommandItem, Generic[T]):
             priority = random.random()
             prioritised_choices.append((priority, choice))
 
-        prioritised_choices.sort(key=lambda student: student[1])
+        prioritised_choices.sort(key=lambda student: student[0])
 
         sample = [choice for (priority, choice) in prioritised_choices[:sample_size]]
 
